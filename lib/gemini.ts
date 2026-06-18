@@ -19,10 +19,11 @@ export async function generateBusinessReply(input: GeminiInput) {
     return buildMockReply(input);
   }
 
-  const gemini = new GoogleGenerativeAI(env.geminiApiKey);
-  const model = gemini.getGenerativeModel({ model: "gemini-flash-latest" });
+  try {
+    const gemini = new GoogleGenerativeAI(env.geminiApiKey);
+    const model = gemini.getGenerativeModel({ model: "gemini-flash-latest" });
 
-  const prompt = `
+    const prompt = `
 Você é um atendente comercial do negócio ${input.businessName}, nicho ${input.niche}.
 Tom obrigatório: ${input.tone}.
 Horário: ${input.businessHours || "não informado"}.
@@ -37,8 +38,11 @@ Se não souber algo com segurança, responda que vai encaminhar para atendimento
 Mensagem do cliente: ${input.latestCustomerMessage}
 `;
 
-  const result = await model.generateContent(prompt);
-  return result.response.text().trim();
+    const result = await model.generateContent(prompt);
+    return result.response.text().trim();
+  } catch {
+    return "Entendi. Vou encaminhar sua solicitação para um atendente humano te responder com precisão.";
+  }
 }
 
 function buildMockReply(input: GeminiInput) {

@@ -6,7 +6,8 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   test: {
-    environment: "node"
+    environment: "node",
+    exclude: [".worktrees/**", "node_modules/**"]
   },
   resolve: {
     alias: {

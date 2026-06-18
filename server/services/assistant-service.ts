@@ -26,12 +26,12 @@ export async function buildAssistantReply(businessId: string, latestCustomerMess
     businessName: snapshot.name,
     niche: snapshot.niche,
     businessHours: businessHours ?? "",
-    products: snapshot.products.map((product) => ({
+    products: snapshot.products.map((product: (typeof snapshot.products)[number]) => ({
       name: product.name,
       description: product.description,
       price: product.price
     })),
-    faqs: snapshot.faqs.map((faq) => ({
+    faqs: snapshot.faqs.map((faq: (typeof snapshot.faqs)[number]) => ({
       question: faq.question,
       answer: faq.answer
     })),

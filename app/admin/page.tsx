@@ -39,7 +39,7 @@ export default async function AdminPage() {
               </TR>
             </THead>
             <TBody>
-              {rows.map((row) => (
+              {rows.map((row: (typeof rows)[number]) => (
                 <TR key={row.id}>
                   <TD>{row.name}</TD>
                   <TD>{row.owner?.email ?? "-"}</TD>

@@ -163,6 +163,33 @@ ADMIN_EMAILS=owner@empresa.com,operacao@empresa.com
 
 If `ADMIN_EMAILS` is empty in development, the app falls back to `admin@local.test`.
 
+## Message Simulator and E2E Validation
+
+Use `/messages` in two distinct ways:
+
+- `mock mode`: validate tone, FAQ, pricing, handoff, and conversation flow without depending on Meta
+- `live mode`: repeat the same script with the customer's real number after WhatsApp credentials and webhook are ready
+
+Exact E2E validation script:
+
+1. Activate the tenant plan in `/admin`
+2. Confirm the business profile, product, and FAQ are saved
+3. In `mock mode`, open `/messages` and send:
+   - greeting
+   - price question
+   - hours question
+   - FAQ question
+   - unknown question that should push human fallback
+4. Verify each simulated reply is commercially usable
+5. Configure real Meta credentials and webhook
+6. In `live mode`, send the same script from the customer's WhatsApp
+7. Confirm:
+   - inbound message reaches the app
+   - reply is generated
+   - outbound message is delivered
+   - conversation is persisted in `/messages`
+8. Repeat one message with plan `PENDING` to confirm automation remains blocked until reactivation
+
 ## Production Deploy on Vercel
 
 1. Push the repository.

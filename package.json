@@ -10,7 +10,8 @@
     "test": "vitest run --config vitest.config.mjs",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "tsx prisma/seed.ts"
+    "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:seed:demo": "tsx prisma/demo-seed.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",

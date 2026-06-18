@@ -20,7 +20,7 @@ export async function generateBusinessReply(input: GeminiInput) {
   }
 
   const gemini = new GoogleGenerativeAI(env.geminiApiKey);
-  const model = gemini.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = gemini.getGenerativeModel({ model: "gemini-flash-latest" });
 
   const prompt = `
 Você é um atendente comercial do negócio ${input.businessName}, nicho ${input.niche}.

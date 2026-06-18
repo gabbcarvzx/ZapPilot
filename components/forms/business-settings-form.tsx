@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 
+import { EmptyState } from "@/components/dashboard/empty-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip } from "@/components/ui/tooltip";
 
 interface BusinessSettingsFormProps {
   initialValues: {
@@ -46,19 +48,24 @@ export function BusinessSettingsForm({ initialValues }: BusinessSettingsFormProp
         isOnboardingComplete: true
       })
     });
-    setSaved("Configurações salvas.");
+    setSaved("Negocio salvo. Agora valide se o horario, o tom e as mensagens representam como voce vende hoje.");
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Configuração do negócio</CardTitle>
-        <CardDescription>Defina o contexto que será usado pela automação e pela IA.</CardDescription>
+        <CardTitle>Configuracao do negocio</CardTitle>
+        <CardDescription>Defina o contexto que sera usado pela automacao e pela IA.</CardDescription>
       </CardHeader>
       <CardContent>
+        {saved ? (
+          <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+            {saved}
+          </div>
+        ) : null}
         <form action={handleSubmit} className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome do negócio</Label>
+            <Label htmlFor="name">Nome do negocio</Label>
             <Input id="name" name="name" defaultValue={initialValues.name} />
           </div>
           <div className="space-y-2">
@@ -74,15 +81,19 @@ export function BusinessSettingsForm({ initialValues }: BusinessSettingsFormProp
             <Input id="whatsappNumber" name="whatsappNumber" defaultValue={initialValues.whatsappNumber} />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="address">Endereço</Label>
+            <Label htmlFor="address">Endereco</Label>
             <Input id="address" name="address" defaultValue={initialValues.address} />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="businessHours">Horário de funcionamento</Label>
+            <Label htmlFor="businessHours">Horario de funcionamento</Label>
             <Input id="businessHours" name="businessHours" defaultValue={initialValues.businessHours} />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="tone">Tom de atendimento</Label>
+            <Tooltip
+              htmlFor="tone"
+              label="Tom de atendimento"
+              content="Descreva como o atendente deve soar nas respostas: mais direto, consultivo, premium ou popular."
+            />
             <Input id="tone" name="tone" defaultValue={initialValues.tone} />
           </div>
           <div className="space-y-2 md:col-span-2">
@@ -90,13 +101,34 @@ export function BusinessSettingsForm({ initialValues }: BusinessSettingsFormProp
             <Textarea id="welcomeMessage" name="welcomeMessage" defaultValue={initialValues.welcomeMessage} />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="closedMessage">Mensagem fora do horário</Label>
+            <Tooltip
+              htmlFor="closedMessage"
+              label="Mensagem fora do horario"
+              content="Explique o que acontece depois: quando volta a atender, se registra interesse e qual expectativa o lead deve ter."
+            />
             <Textarea id="closedMessage" name="closedMessage" defaultValue={initialValues.closedMessage} />
           </div>
           <div className="md:col-span-2 flex items-center gap-3">
-            <Button type="submit">Salvar negócio</Button>
-            {saved ? <p className="text-sm text-emerald-600">{saved}</p> : null}
+            <Button type="submit">Salvar negocio</Button>
           </div>
+          {!initialValues.whatsappNumber ? (
+            <div className="md:col-span-2">
+              <EmptyState
+                title="WhatsApp comercial ainda nao informado"
+                description="Preencha o numero principal do negocio para facilitar demos, handoff humano e futura ativacao na Meta."
+                actionLabel="Preencha o numero usado com clientes"
+              />
+            </div>
+          ) : null}
+          {!initialValues.businessHours ? (
+            <div className="md:col-span-2">
+              <EmptyState
+                title="Horario comercial ainda vazio"
+                description="Definir o horario agora melhora a mensagem fora do expediente e evita prometer atendimento imediato na demo."
+                actionLabel="Informe dias e faixa horaria"
+              />
+            </div>
+          ) : null}
         </form>
       </CardContent>
     </Card>

@@ -1,9 +1,11 @@
 import { AppShell } from "@/components/dashboard/app-shell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { requireUser } from "@/lib/guards";
 import { getIntegrationStatuses } from "@/server/services/integrations-service";
 
-export default function IntegrationsPage() {
+export default async function IntegrationsPage() {
+  await requireUser();
   const statuses = getIntegrationStatuses();
 
   return (

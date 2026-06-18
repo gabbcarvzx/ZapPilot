@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  CANCELED
+  EXPIRED
+}
+
+enum ConversationStatus {
+  OPEN
+  NEEDS_HUMAN
+  CLOSED
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum MessageSource {
+  USER
+  BOT
+  HUMAN
+  SYSTEM
+}
+
+enum LeadStatus {
+  NEW
+  QUALIFIED
+  NEEDS_HUMAN
+  CONVERTED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(CUSTOMER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  business     Business? @relation("BusinessOwner")
+}
+
+model Business {
+  id                   String            @id @default(cuid())
+  ownerUserId          String            @unique
+  name                 String
+  slug                 String            @unique
+  niche                String
+  address              String            @default("")
+  phone                String            @default("")
+  whatsappNumber       String            @default("")
+  businessHoursJson    String            @default("")
+  welcomeMessage       String            @default("")
+  closedMessage        String            @default("")
+  tone                 String            @default("Profissional, simples e direto")
+  isOnboardingComplete Boolean           @default(false)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  owner                User              @relation("BusinessOwner", fields: [ownerUserId], references: [id])
+  subscriptions        Subscription[]
+  whatsappConfig       WhatsAppConfig?
+  products             Product[]
+  faqs                 FAQ[]
+  conversations        Conversation[]
+  messages             Message[]
+  leads                Lead[]
+
+  @@index([slug])
+}
+
+model Plan {
+  id           String         @id
+  code         String         @unique
+  name         String
+  priceCents   Int
+  currency     String
+  description  String
+  featuresJson String
+  isActive     Boolean        @default(true)
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id                 String             @id @default(cuid())
+  businessId         String
+  planId             String
+  status             SubscriptionStatus @default(PENDING)
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  activatedAt        DateTime?
+  canceledAt         DateTime?
+  externalReference  String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  business           Business           @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  plan               Plan               @relation(fields: [planId], references: [id])
+
+  @@index([businessId, status])
+}
+
+model WhatsAppConfig {
+  id                    String   @id @default(cuid())
+  businessId            String   @unique
+  metaBusinessAccountId String   @default("")
+  metaPhoneNumberId     String   @default("")
+  metaAppId             String   @default("")
+  verifyToken           String   @default("")
+  accessToken           String   @default("")
+  webhookStatus         String   @default("mock")
+  isActive              Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  business              Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  businessId  String
+  name        String
+  description String   @default("")
+  price       String   @default("")
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([businessId, sortOrder])
+}
+
+model FAQ {
+  id         String   @id @default(cuid())
+  businessId String
+  question   String
+  answer     String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([businessId, sortOrder])
+}
+
+model Conversation {
+  id            String             @id @default(cuid())
+  businessId    String
+  contactPhone  String
+  contactName   String             @default("")
+  status        ConversationStatus @default(OPEN)
+  lastMessageAt DateTime           @default(now())
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  business      Business           @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  messages      Message[]
+
+  @@index([businessId, contactPhone])
+  @@index([businessId, status])
+}
+
+model Message {
+  id             String           @id @default(cuid())
+  businessId     String
+  conversationId String
+  direction      MessageDirection
+  source         MessageSource
+  content        String
+  metaJson       String           @default("{}")
+  sentAt         DateTime         @default(now())
+  createdAt      DateTime         @default(now())
+  business       Business         @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  conversation   Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([businessId, sentAt])
+}
+
+model Lead {
+  id             String      @id @default(cuid())
+  businessId     String
+  conversationId String?
+  name           String      @default("")
+  phone          String
+  notes          String      @default("")
+  status         LeadStatus  @default(NEW)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  business       Business    @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([businessId, status])
+  @@index([businessId, phone])
+}

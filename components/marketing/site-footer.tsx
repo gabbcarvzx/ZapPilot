@@ -10,7 +10,7 @@ export function SiteFooter() {
             <Image src="/brand/logo-badge.svg" alt="ZapPilot" width={40} height={40} className="h-10 w-10 rounded-2xl" />
             <div>
               <p className="font-semibold text-slate-950">ZapPilot</p>
-              <p className="text-sm text-slate-500">Atendimento no WhatsApp com mais velocidade, clareza e conversao.</p>
+              <p className="text-sm text-slate-500">Atendimento no WhatsApp com mais velocidade, clareza e conversão.</p>
             </div>
           </div>
           <div className="flex flex-wrap gap-4 text-sm text-slate-500">

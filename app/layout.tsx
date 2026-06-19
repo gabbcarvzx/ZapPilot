@@ -7,8 +7,8 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ZapPilot | WhatsApp vendendo por voce",
-  description: "Seu WhatsApp atendendo clientes automaticamente, mesmo quando voce esta ocupado."
+  title: "ZapPilot | Atendente automático para WhatsApp",
+  description: "Atenda clientes, organize pedidos e venda melhor pelo WhatsApp com um atendente automático feito para comércios locais."
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

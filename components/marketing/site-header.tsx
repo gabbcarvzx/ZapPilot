@@ -11,7 +11,7 @@ export function SiteHeader() {
           <Image src="/brand/logo-badge.svg" alt="ZapPilot" width={42} height={42} className="h-10 w-10 rounded-2xl" />
           <div>
             <p className="text-lg font-semibold tracking-tight text-slate-950">ZapPilot</p>
-            <p className="text-xs font-medium text-slate-500">WhatsApp vendendo por voce</p>
+            <p className="text-xs font-medium text-slate-500">Atendente automático para WhatsApp</p>
           </div>
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 lg:flex">
@@ -24,7 +24,7 @@ export function SiteHeader() {
             <Link href="/login">Entrar</Link>
           </Button>
           <Button asChild size="lg">
-            <Link href="/signup">Quero atender melhor</Link>
+            <Link href="/signup">Quero começar agora</Link>
           </Button>
         </div>
       </div>

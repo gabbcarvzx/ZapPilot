@@ -1,7 +1,7 @@
 export interface IntegrationStatus {
   name: string;
   configured: boolean;
-  mode: "mock" | "live";
+  mode: "Ativo" | "Simulado";
   description: string;
   nextStep: string;
 }

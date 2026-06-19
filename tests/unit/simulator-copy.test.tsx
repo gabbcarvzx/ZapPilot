@@ -5,11 +5,11 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { MessageSimulatorForm } from "../../components/forms/message-simulator-form";
 
 describe("message simulator guidance", () => {
-  it("explains mock mode and live validation expectations", () => {
+  it("explains simulated mode and real-channel validation expectations", () => {
     const markup = renderToStaticMarkup(<MessageSimulatorForm businessId="biz_demo" />);
 
-    expect(markup).toContain("modo mock");
-    expect(markup).toContain("modo live");
+    expect(markup).toContain("modo simulado");
+    expect(markup).toContain("canal real");
     expect(markup).toContain("O que observar");
   });
 });

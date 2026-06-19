@@ -9,7 +9,7 @@ export default async function AssistantPage() {
   if (!business) return null;
 
   return (
-    <AppShell title="Atendente automático" subtitle="Defina o comportamento comercial, catálogo básico e FAQ do seu atendente.">
+    <AppShell title="Atendente automatico" subtitle="Defina o comportamento comercial, o catalogo principal e as respostas que vao vender por voce.">
       <AssistantForm business={business} products={business.products} faqs={business.faqs} />
     </AppShell>
   );

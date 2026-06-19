@@ -27,7 +27,7 @@ export function LoginForm() {
     setLoading(false);
 
     if (result?.error) {
-      setError("Não foi possível entrar. Verifique seu e-mail e senha.");
+      setError("Nao foi possivel entrar. Confira seu e-mail e senha e tente novamente.");
       return;
     }
 
@@ -38,25 +38,22 @@ export function LoginForm() {
   return (
     <Card className="mx-auto max-w-md">
       <CardHeader>
-        <CardTitle>Entrar no painel</CardTitle>
-        <CardDescription>Use sua conta para acessar o ZapPilot Local.</CardDescription>
+        <CardTitle>Entrar na sua conta</CardTitle>
+        <CardDescription>Acesse seu painel para acompanhar conversas, configuracoes e status da empresa.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form
-          action={handleSubmit}
-          className="space-y-4"
-        >
+        <form action={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
-            <Input id="email" name="email" type="email" defaultValue="admin@local.test" required />
+            <Input id="email" name="email" type="email" placeholder="voce@empresa.com" required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Senha</Label>
-            <Input id="password" name="password" type="password" defaultValue="admin123" required />
+            <Input id="password" name="password" type="password" placeholder="Digite sua senha" required />
           </div>
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <Button className="w-full" type="submit" disabled={loading}>
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? "Entrando..." : "Entrar no painel"}
           </Button>
         </form>
       </CardContent>
@@ -90,7 +87,7 @@ export function SignUpForm() {
     setLoading(false);
 
     if (!response.ok) {
-      setError("Não foi possível criar sua conta agora.");
+      setError("Nao foi possivel criar sua conta agora. Tente novamente em instantes.");
       return;
     }
 
@@ -107,8 +104,8 @@ export function SignUpForm() {
   return (
     <Card className="mx-auto max-w-2xl">
       <CardHeader>
-        <CardTitle>Criar conta</CardTitle>
-        <CardDescription>Comece com uma estrutura pronta para responder clientes e vender mais no WhatsApp.</CardDescription>
+        <CardTitle>Crie sua conta</CardTitle>
+        <CardDescription>Comece com uma estrutura pronta para responder clientes, organizar o atendimento e vender melhor no WhatsApp.</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={handleSubmit} className="grid gap-4 md:grid-cols-2">
@@ -121,12 +118,12 @@ export function SignUpForm() {
             <Input id="email" name="email" type="email" required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="businessName">Nome do negócio</Label>
+            <Label htmlFor="businessName">Nome da empresa</Label>
             <Input id="businessName" name="businessName" required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="niche">Nicho</Label>
-            <Input id="niche" name="niche" required />
+            <Label htmlFor="niche">Segmento</Label>
+            <Input id="niche" name="niche" placeholder="Ex.: Hamburgueria, barbearia, clinica" required />
           </div>
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="password">Senha</Label>
@@ -135,7 +132,7 @@ export function SignUpForm() {
           {error ? <p className="text-sm text-red-600 md:col-span-2">{error}</p> : null}
           <div className="md:col-span-2">
             <Button type="submit" disabled={loading}>
-              {loading ? "Criando..." : "Começar agora"}
+              {loading ? "Criando..." : "Quero comecar agora"}
             </Button>
           </div>
         </form>

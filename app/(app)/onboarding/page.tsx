@@ -15,9 +15,9 @@ export default async function OnboardingPage() {
   if (!business) redirect("/dashboard");
 
   return (
-    <AppShell title="Onboarding em 3 passos" subtitle="Cadastre o negocio, prepare o WhatsApp e defina o atendente automatico.">
+    <AppShell title="Configuracao em 3 passos" subtitle="Cadastre a empresa, prepare o WhatsApp e defina o atendente automatico.">
       <div className="mb-6 flex flex-wrap gap-2">
-        <Badge>1. Negocio</Badge>
+        <Badge>1. Empresa</Badge>
         <Badge>2. WhatsApp</Badge>
         <Badge>3. Atendente</Badge>
       </div>
@@ -26,12 +26,12 @@ export default async function OnboardingPage() {
           <EmptyState
             title="Passo 1: contexto comercial"
             description="Abra a call preenchendo nome, nicho, horario e mensagens base. Isso ajuda o lead a se reconhecer no produto."
-            actionLabel="Mostre como o negocio fala hoje"
+            actionLabel="Mostre como a empresa fala hoje"
           />
           <EmptyState
             title="Passo 2: prontidao de WhatsApp"
             description="Explique o que ja pode ser salvo agora e o que so depende da Meta quando o numero comercial estiver pronto."
-            actionLabel="Use mock com honestidade operacional"
+            actionLabel="Use o modo simulado com honestidade operacional"
           />
           <EmptyState
             title="Passo 3: pitch do atendente"

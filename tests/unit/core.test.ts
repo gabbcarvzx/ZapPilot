@@ -11,12 +11,12 @@ describe("integration fallbacks", () => {
     delete process.env.ADMIN_EMAILS;
   });
 
-  it("uses mock modes when secrets are absent", async () => {
+  it("uses simulated modes when secrets are absent", async () => {
     const { getIntegrationStatuses } = await import("../../server/services/integrations-service");
     const statuses = getIntegrationStatuses();
 
-    expect(statuses.find((item) => item.name === "Gemini")?.mode).toBe("mock");
-    expect(statuses.find((item) => item.name === "WhatsApp Cloud API")?.mode).toBe("mock");
+    expect(statuses.find((item) => item.name === "IA de atendimento")?.mode).toBe("Simulado");
+    expect(statuses.find((item) => item.name === "Conexao WhatsApp")?.mode).toBe("Simulado");
   });
 
   it("returns deterministic mock Gemini response", async () => {

@@ -8,6 +8,13 @@ import { PLAN_CATALOG } from "@/lib/plans";
 import { getTenantDiagnosticSummary } from "@/server/services/integrations-service";
 import { getActivationGuidance, getAllBusinessesWithSubscriptions, updateSubscription as saveSubscription } from "@/server/services/subscription-service";
 
+function translatePlanStatus(status?: string | null) {
+  if (status === "ACTIVE") return "Ativo";
+  if (status === "CANCELED") return "Cancelado";
+  if (status === "EXPIRED") return "Expirado";
+  return "Pendente";
+}
+
 async function updateSubscriptionAction(formData: FormData) {
   "use server";
 
@@ -48,7 +55,7 @@ export default async function AdminPage() {
   const readyCount = rowSummaries.filter((item) => item.activationGuidance.tone === "success").length;
 
   return (
-    <AppShell title="Admin" subtitle="Ative planos, acompanhe negocios conectados e controle o acesso comercial da operacao.">
+    <AppShell title="Operacao" subtitle="Ative planos, acompanhe empresas conectadas e controle a liberacao comercial da operacao.">
       <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
@@ -57,7 +64,7 @@ export default async function AdminPage() {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-semibold text-slate-900">{activeCount}</p>
-              <p className="text-sm text-slate-600">Tenants liberados comercialmente pelo admin.</p>
+              <p className="text-sm text-slate-600">Empresas liberadas comercialmente pela operacao.</p>
             </CardContent>
           </Card>
           <Card>
@@ -66,7 +73,7 @@ export default async function AdminPage() {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-semibold text-slate-900">{pendingCount}</p>
-              <p className="text-sm text-slate-600">Negocios que ainda nao podem responder automaticamente.</p>
+              <p className="text-sm text-slate-600">Empresas que ainda nao podem responder automaticamente.</p>
             </CardContent>
           </Card>
           <Card>
@@ -75,14 +82,14 @@ export default async function AdminPage() {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-semibold text-slate-900">{readyCount}</p>
-              <p className="text-sm text-slate-600">Tenants com ativacao suficiente para validacao operacional.</p>
+              <p className="text-sm text-slate-600">Empresas com ativacao suficiente para validacao operacional.</p>
             </CardContent>
           </Card>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Clientes cadastrados</CardTitle>
+            <CardTitle>Empresas cadastradas</CardTitle>
           </CardHeader>
           <CardContent className="overflow-x-auto">
             <Table>
@@ -104,9 +111,9 @@ export default async function AdminPage() {
                     <TD>{row.owner?.email ?? "-"}</TD>
                     <TD>{row.subscriptions[0]?.plan?.name ?? "Start"}</TD>
                     <TD>
-                      <Badge className={getToneClassName(activationGuidance.tone)}>{row.subscriptions[0]?.status ?? "PENDING"}</Badge>
+                      <Badge className={getToneClassName(activationGuidance.tone)}>{translatePlanStatus(row.subscriptions[0]?.status)}</Badge>
                     </TD>
-                    <TD>{row.whatsappConfig?.isActive ? "Conectado" : "Mock"}</TD>
+                    <TD>{row.whatsappConfig?.isActive ? "Ativo" : "Simulado"}</TD>
                     <TD>
                       <div className="max-w-xs space-y-1">
                         <p className="text-sm font-medium text-slate-900">{activationGuidance.title}</p>
@@ -124,10 +131,10 @@ export default async function AdminPage() {
                           ))}
                         </select>
                         <select name="status" defaultValue={row.subscriptions[0]?.status ?? "PENDING"} className="rounded-xl border px-3 py-2 text-sm">
-                          <option value="ACTIVE">ACTIVE</option>
-                          <option value="PENDING">PENDING</option>
-                          <option value="CANCELED">CANCELED</option>
-                          <option value="EXPIRED">EXPIRED</option>
+                          <option value="ACTIVE">Ativo</option>
+                          <option value="PENDING">Pendente</option>
+                          <option value="CANCELED">Cancelado</option>
+                          <option value="EXPIRED">Expirado</option>
                         </select>
                         <Button size="sm" type="submit">
                           Salvar

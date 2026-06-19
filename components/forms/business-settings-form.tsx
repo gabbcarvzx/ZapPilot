@@ -48,14 +48,14 @@ export function BusinessSettingsForm({ initialValues }: BusinessSettingsFormProp
         isOnboardingComplete: true
       })
     });
-    setSaved("Negocio salvo. Agora valide se o horario, o tom e as mensagens representam como voce vende hoje.");
+    setSaved("Empresa salva. Agora valide se o horario, o tom e as mensagens representam como voce atende e vende hoje.");
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Configuracao do negocio</CardTitle>
-        <CardDescription>Defina o contexto que sera usado pela automacao e pela IA.</CardDescription>
+        <CardTitle>Dados da empresa</CardTitle>
+        <CardDescription>Defina o contexto comercial que vai orientar o atendimento automatico.</CardDescription>
       </CardHeader>
       <CardContent>
         {saved ? (
@@ -65,7 +65,7 @@ export function BusinessSettingsForm({ initialValues }: BusinessSettingsFormProp
         ) : null}
         <form action={handleSubmit} className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome do negocio</Label>
+            <Label htmlFor="name">Nome da empresa</Label>
             <Input id="name" name="name" defaultValue={initialValues.name} />
           </div>
           <div className="space-y-2">
@@ -89,11 +89,7 @@ export function BusinessSettingsForm({ initialValues }: BusinessSettingsFormProp
             <Input id="businessHours" name="businessHours" defaultValue={initialValues.businessHours} />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Tooltip
-              htmlFor="tone"
-              label="Tom de atendimento"
-              content="Descreva como o atendente deve soar nas respostas: mais direto, consultivo, premium ou popular."
-            />
+            <Tooltip htmlFor="tone" label="Tom de atendimento" content="Descreva como sua empresa costuma atender: mais direta, consultiva, premium ou popular." />
             <Input id="tone" name="tone" defaultValue={initialValues.tone} />
           </div>
           <div className="space-y-2 md:col-span-2">
@@ -109,7 +105,7 @@ export function BusinessSettingsForm({ initialValues }: BusinessSettingsFormProp
             <Textarea id="closedMessage" name="closedMessage" defaultValue={initialValues.closedMessage} />
           </div>
           <div className="md:col-span-2 flex items-center gap-3">
-            <Button type="submit">Salvar negocio</Button>
+            <Button type="submit">Salvar empresa</Button>
           </div>
           {!initialValues.whatsappNumber ? (
             <div className="md:col-span-2">

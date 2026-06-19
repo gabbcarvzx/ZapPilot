@@ -38,14 +38,14 @@ export function WhatsAppSettingsForm({
         isActive: Boolean(formData.get("isActive"))
       })
     });
-    setSaved("WhatsApp salvo. O proximo passo e conferir IDs, verify token e decidir quando esse tenant sai do modo mock.");
+    setSaved("Conexao salva. O proximo passo e conferir os codigos da Meta e decidir quando a empresa sai do modo simulado.");
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Configuracao do WhatsApp</CardTitle>
-        <CardDescription>Voce pode salvar dados parciais agora e ativar a automacao depois.</CardDescription>
+        <CardTitle>Conexao do WhatsApp</CardTitle>
+        <CardDescription>Voce pode salvar os dados agora e ativar o canal real quando o numero comercial estiver pronto.</CardDescription>
       </CardHeader>
       <CardContent>
         {saved ? (
@@ -58,7 +58,7 @@ export function WhatsAppSettingsForm({
             <EmptyState
               title="Nenhum WhatsApp conectado ainda"
               description="Voce pode salvar os campos agora para a call comercial e ativar a integracao real quando o numero da Meta estiver pronto."
-              actionLabel="Mock agora, ativacao real depois"
+              actionLabel="Simulado agora, ativacao real depois"
             />
           </div>
         ) : null}
@@ -66,49 +66,49 @@ export function WhatsAppSettingsForm({
           <div className="space-y-2">
             <Tooltip
               htmlFor="metaBusinessAccountId"
-              label="Business Account ID"
-              content="Identifica a conta comercial da Meta ligada ao tenant e deve bater com o ambiente que sera ativado."
+              label="Codigo da conta comercial"
+              content="Identifica a conta comercial da Meta ligada a empresa e deve bater com o ambiente que sera ativado."
             />
             <Input id="metaBusinessAccountId" name="metaBusinessAccountId" defaultValue={initialValues.metaBusinessAccountId} />
           </div>
           <div className="space-y-2">
             <Tooltip
               htmlFor="metaPhoneNumberId"
-              label="Phone Number ID"
-              content="Esse ID identifica o numero conectado na Cloud API. Sem ele, o envio real nao sai do ambiente mock."
+              label="Codigo do numero"
+              content="Esse codigo identifica o numero conectado na Cloud API. Sem ele, o envio real nao sai do ambiente simulado."
             />
             <Input id="metaPhoneNumberId" name="metaPhoneNumberId" defaultValue={initialValues.metaPhoneNumberId} />
           </div>
           <div className="space-y-2">
             <Tooltip
               htmlFor="metaAppId"
-              label="App ID"
-              content="Use o App ID do projeto Meta que hospedara o webhook e o envio real desse tenant."
+              label="Codigo do app"
+              content="Use o codigo do projeto Meta que hospedara a conexao do WhatsApp e o envio real dessa empresa."
             />
             <Input id="metaAppId" name="metaAppId" defaultValue={initialValues.metaAppId} />
           </div>
           <div className="space-y-2">
             <Tooltip
               htmlFor="verifyToken"
-              label="Verify token"
-              content="Use exatamente o mesmo token configurado na Meta para o desafio de verificacao do webhook."
+              label="Token de verificacao"
+              content="Use exatamente o mesmo token configurado na Meta para validar a conexao do WhatsApp."
             />
             <Input id="verifyToken" name="verifyToken" defaultValue={initialValues.verifyToken} />
           </div>
           <div className="space-y-2 md:col-span-2">
             <Tooltip
               htmlFor="accessToken"
-              label="Access token"
-              content="Esse token autoriza envio real. Enquanto estiver vazio, o produto continua honesto em modo mock para demos."
+              label="Token de acesso"
+              content="Esse token autoriza o envio real. Enquanto estiver vazio, o produto continua em modo simulado para demos."
             />
             <Input id="accessToken" name="accessToken" defaultValue={initialValues.accessToken} />
           </div>
           <label className="flex items-center gap-2 text-sm text-slate-700 md:col-span-2">
             <input type="checkbox" name="isActive" defaultChecked={initialValues.isActive} />
-            Marcar como ativo
+            Marcar conexao como ativa
           </label>
           <div className="md:col-span-2 flex items-center gap-3">
-            <Button type="submit">Salvar integracao</Button>
+            <Button type="submit">Salvar conexao</Button>
           </div>
         </form>
       </CardContent>

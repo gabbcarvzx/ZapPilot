@@ -11,7 +11,7 @@ export default async function MessagesPage() {
   const conversations = await listMessagesForBusiness(user.businessId);
 
   return (
-    <AppShell title="Mensagens e historico" subtitle="Veja as conversas salvas e simule novas mensagens locais sem depender da Meta.">
+    <AppShell title="Conversas e simulacao" subtitle="Veja as conversas salvas e simule novos atendimentos sem depender da Meta.">
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <MessageSimulatorForm businessId={user.businessId} />
         <div className="space-y-4">

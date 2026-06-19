@@ -85,15 +85,15 @@ export function AssistantForm({
       })
     });
 
-    setAssistantSaved("Atendente salvo. O proximo passo e revisar se a FAQ e a mensagem fora do horario refletem o atendimento real.");
+    setAssistantSaved("Atendente salvo. O proximo passo e revisar se a FAQ e a mensagem fora do horario refletem o atendimento real da empresa.");
   }
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
       <Card>
         <CardHeader>
-          <CardTitle>Configurar atendente</CardTitle>
-          <CardDescription>Defina o tom, mensagens-base e uma FAQ inicial para a IA e para a automacao.</CardDescription>
+        <CardTitle>Configurar atendente</CardTitle>
+        <CardDescription>Defina o tom, as mensagens base e uma FAQ inicial para vender com mais clareza.</CardDescription>
         </CardHeader>
         <CardContent>
           {assistantSaved ? (
@@ -106,7 +106,7 @@ export function AssistantForm({
               <Tooltip
                 htmlFor="tone"
                 label="Tom de atendimento"
-                content="Descreva o estilo ideal do atendente para esse negocio: objetivo, acolhedor, premium, tecnico ou agressivo em conversao."
+                content="Descreva o estilo ideal do atendente para essa empresa: objetivo, acolhedor, premium ou mais agressivo em conversao."
               />
               <Input id="tone" name="tone" defaultValue={business.tone} />
             </div>
@@ -125,7 +125,7 @@ export function AssistantForm({
             {faqs.length === 0 ? (
               <EmptyState
                 title="Nenhuma FAQ configurada"
-                description="Comece pela pergunta mais comum do lead. Isso acelera demos e melhora a primeira resposta automatica."
+                description="Comece pela pergunta mais comum do cliente. Isso acelera demos e melhora a primeira resposta automatica."
                 actionLabel="Cadastre ao menos uma pergunta frequente"
               />
             ) : null}
@@ -143,7 +143,7 @@ export function AssistantForm({
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Catalogo basico</CardTitle>
+          <CardTitle>Catalogo principal</CardTitle>
           <CardDescription>Comece com pelo menos um produto ou servico principal.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -156,7 +156,7 @@ export function AssistantForm({
             {products.length === 0 ? (
               <EmptyState
                 title="Nenhum produto ou servico cadastrado"
-                description="Adicione o item principal que voce quer vender na call. Ele costuma ser a primeira pergunta em uma demo comercial."
+                description="Adicione o item principal que voce quer vender na demonstracao. Ele costuma ser a primeira pergunta em uma conversa comercial."
                 actionLabel="Cadastre o item principal do pitch"
               />
             ) : null}

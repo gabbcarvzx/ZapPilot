@@ -31,8 +31,8 @@ export function MessageSimulatorForm({ businessId }: { businessId: string }) {
       <div className="space-y-2">
         <p className="text-lg font-semibold text-slate-900">Simulador comercial</p>
         <p className="text-sm leading-6 text-slate-600">
-          Use o <strong>modo mock</strong> para demonstrar resposta, tom e fluxo sem depender da Meta. Quando o numero do cliente estiver pronto,
-          repita o mesmo roteiro em <strong>modo live</strong> para validar o canal real.
+          Use o <strong>modo simulado</strong> para demonstrar resposta, tom e fluxo sem depender da Meta. Quando o numero do cliente estiver pronto,
+          repita o mesmo roteiro no <strong>canal real</strong> para validar a operacao.
         </p>
       </div>
 
@@ -41,7 +41,7 @@ export function MessageSimulatorForm({ businessId }: { businessId: string }) {
         <ul className="mt-2 space-y-1">
           <li>1. A mensagem recebida faz sentido para o nicho e para o pitch comercial.</li>
           <li>2. A resposta cita produto, horario, FAQ ou handoff humano quando necessario.</li>
-          <li>3. Em live, a conversa deve aparecer aqui depois do envio real no WhatsApp.</li>
+          <li>3. No canal real, a conversa deve aparecer aqui depois do envio no WhatsApp.</li>
         </ul>
       </div>
 

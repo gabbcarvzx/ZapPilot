@@ -8,10 +8,12 @@ export default function BlockedPage() {
     <main className="mx-auto max-w-2xl px-4 py-16">
       <Card>
         <CardHeader>
-          <CardTitle>Automação temporariamente bloqueada</CardTitle>
+          <CardTitle>Atendimento automatico temporariamente bloqueado</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-slate-600">
-          <p>Seu plano está pendente, cancelado ou expirado. O painel continua acessível, mas o sistema não responderá automaticamente no WhatsApp até a reativação.</p>
+          <p>
+            Seu plano esta pendente, cancelado ou expirado. O painel continua acessivel, mas a empresa nao vai responder automaticamente no WhatsApp ate a reativacao.
+          </p>
           <div className="flex gap-3">
             <Button asChild>
               <Link href="/pricing">Ver planos</Link>

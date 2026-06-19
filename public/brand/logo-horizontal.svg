@@ -1,0 +1,19 @@
+<svg width="620" height="180" viewBox="0 0 620 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="620" height="180" rx="40" fill="#F6F7FB"/>
+  <rect x="24" y="26" width="128" height="128" rx="32" fill="#0B1324"/>
+  <path d="M50 72C50 61.5066 58.5066 53 69 53H107C117.493 53 126 61.5066 126 72V108C126 118.493 117.493 127 107 127H84L66 141V127H69C58.5066 127 50 118.493 50 108V72Z" fill="url(#paint0_linear_1_3)"/>
+  <path d="M72 82H105" stroke="#FFF8EE" stroke-width="9" stroke-linecap="round"/>
+  <path d="M72 98H96" stroke="#FFF8EE" stroke-width="9" stroke-linecap="round"/>
+  <path d="M72 114H86" stroke="#FFF8EE" stroke-width="9" stroke-linecap="round"/>
+  <path d="M116 53L127 64L104 87" stroke="#F59E0B" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M191 74H318.5" stroke="#D3D9E8" stroke-width="2"/>
+  <text x="190" y="68" fill="#0B1324" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="48" font-weight="700">ZapPilot</text>
+  <text x="191" y="110" fill="#41516D" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="24" font-weight="600">WhatsApp vendendo por você</text>
+  <text x="191" y="140" fill="#66758F" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="18" font-weight="500">Atendimento automático com cara de empresa séria</text>
+  <defs>
+    <linearGradient id="paint0_linear_1_3" x1="50" y1="53" x2="126" y2="141" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F766E"/>
+      <stop offset="1" stop-color="#14B8A6"/>
+    </linearGradient>
+  </defs>
+</svg>

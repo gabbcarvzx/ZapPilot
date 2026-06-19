@@ -9,7 +9,7 @@ export default async function BusinessSettingsPage() {
   if (!business) return null;
 
   return (
-    <AppShell title="Negócio" subtitle="Ajuste dados comerciais, contexto e mensagens que alimentam a automação.">
+    <AppShell title="Empresa" subtitle="Ajuste dados comerciais, contexto e mensagens que orientam o atendimento automatico.">
       <BusinessSettingsForm
         initialValues={{
           name: business.name,

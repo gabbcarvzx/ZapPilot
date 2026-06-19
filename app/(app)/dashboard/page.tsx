@@ -8,6 +8,13 @@ import { getIntegrationStatuses, getTenantDiagnosticSummary } from "@/server/ser
 import { listMessagesForBusiness } from "@/server/services/message-service";
 import { getActivationGuidance, getSubscriptionForBusiness } from "@/server/services/subscription-service";
 
+function translatePlanStatus(status?: string | null) {
+  if (status === "ACTIVE") return "Ativo";
+  if (status === "CANCELED") return "Cancelado";
+  if (status === "EXPIRED") return "Expirado";
+  return "Pendente";
+}
+
 export default async function DashboardPage() {
   const user = await requireUser();
   const business = await getBusinessSnapshot(user.businessId);
@@ -33,7 +40,7 @@ export default async function DashboardPage() {
   return (
     <AppShell
       title={`Ola, ${user.name?.split(" ")[0] ?? "cliente"}`}
-      subtitle="Acompanhe o status do plano, o nivel de configuracao do negocio e a prontidao das integracoes."
+      subtitle="Acompanhe o plano, a configuracao da empresa e o que ainda falta para colocar o atendimento em operacao."
     >
       <div className="space-y-6">
         <DiagnosticSummary summary={diagnosticSummary} />
@@ -55,7 +62,7 @@ export default async function DashboardPage() {
                 <CardTitle>Status do plano</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Badge>{subscription?.status ?? "PENDING"}</Badge>
+                <Badge>{translatePlanStatus(subscription?.status)}</Badge>
                 <p className="text-sm text-slate-600">Plano atual: {subscription?.plan?.name ?? "Start"}</p>
                 {subscription?.status !== "ACTIVE" ? (
                   <p className="text-sm text-slate-600">
@@ -67,7 +74,7 @@ export default async function DashboardPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Onboarding</CardTitle>
+                <CardTitle>Configuracao inicial</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Badge className={business?.isOnboardingComplete ? "bg-emerald-100 text-emerald-800" : ""}>
@@ -91,6 +98,7 @@ export default async function DashboardPage() {
                       </Badge>
                     </div>
                     <p className="mt-2 text-sm text-slate-600">{status.description}</p>
+                    <p className="mt-2 text-sm font-medium text-slate-900">{status.nextStep}</p>
                   </div>
                 ))}
               </CardContent>

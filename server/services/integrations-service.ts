@@ -73,8 +73,13 @@ function buildPlanDiagnostic(subscriptionStatus: SubscriptionStatus): Diagnostic
 
   return {
     status: "blocked",
-    label: subscriptionStatus ?? "PENDING",
-    detail: "Plano ainda nao foi ativado. A automacao fica bloqueada para este tenant."
+    label:
+      subscriptionStatus === "CANCELED"
+        ? "Cancelado"
+        : subscriptionStatus === "EXPIRED"
+          ? "Expirado"
+          : "Pendente",
+    detail: "Plano ainda nao foi ativado. A automacao fica bloqueada para esta empresa."
   };
 }
 
@@ -87,23 +92,23 @@ function buildWhatsAppDiagnostic(config?: DiagnosticWhatsAppConfig | null): Diag
   if (config?.isActive && hasCredentials && envFlags.whatsappLive) {
     return {
       status: "healthy",
-      label: "Live",
-      detail: "Canal WhatsApp ativo com credenciais preenchidas para o tenant."
+      label: "Ativo",
+      detail: "Canal WhatsApp ativo com credenciais preenchidas para a empresa."
     };
   }
 
   if (config?.isActive && hasCredentials) {
     return {
       status: "blocked",
-      label: "Mock global",
-      detail: "O tenant salvou credenciais, mas o envio real ainda depende das credenciais globais do ambiente."
+      label: "Simulado no ambiente",
+      detail: "A empresa salvou credenciais, mas o envio real ainda depende das credenciais globais do ambiente."
     };
   }
 
   return {
     status: "blocked",
     label: "Pendente",
-    detail: "WhatsApp ainda nao esta ativo ou faltam credenciais operacionais do tenant."
+    detail: "WhatsApp ainda nao esta ativo ou faltam credenciais operacionais da empresa."
   };
 }
 
@@ -111,23 +116,23 @@ function buildAiDiagnostic(runtime: DiagnosticRuntime): DiagnosticItem {
   if (runtime.geminiLive && !runtime.geminiFailureMode) {
     return {
       status: "healthy",
-      label: "Live",
-      detail: "Gemini esta respondendo normalmente."
+      label: "Ativa",
+      detail: "A IA esta respondendo normalmente."
     };
   }
 
   if (runtime.humanFallbackAvailable) {
     return {
       status: "degraded",
-      label: runtime.geminiFailureMode ? "Degradado com fallback humano" : "Fallback humano",
-      detail: "A IA pode degradar sob quota, mas o tenant continua operacional com fallback humano."
+      label: runtime.geminiFailureMode ? "Degradada com atendimento humano" : "Atendimento humano",
+      detail: "A IA pode degradar sob quota, mas a empresa continua operacional com atendimento humano."
     };
   }
 
   return {
     status: "blocked",
     label: "Indisponivel",
-    detail: "Sem Gemini e sem fallback humano. O tenant perde a capacidade de resposta assistida."
+    detail: "Sem IA e sem atendimento humano de apoio. A empresa perde a capacidade de resposta assistida."
   };
 }
 
@@ -135,15 +140,15 @@ function buildDatabaseDiagnostic(runtime: DiagnosticRuntime): DiagnosticItem {
   if (runtime.databaseConfigured) {
     return {
       status: "healthy",
-      label: "Live",
-      detail: "Neon e Prisma estao disponiveis para persistencia real."
+      label: "Ativo",
+      detail: "Banco de dados pronto para registrar conversas e configuracoes reais."
     };
   }
 
   return {
     status: "blocked",
-    label: "Mock",
-    detail: "Banco real nao esta configurado. O tenant nao deve operar em modo comercial."
+    label: "Simulado",
+    detail: "Banco real nao esta configurado. A empresa nao deve operar em modo comercial."
   };
 }
 
@@ -155,7 +160,7 @@ function buildWebhookDiagnostic(config: DiagnosticWhatsAppConfig | null | undefi
     return {
       status: "healthy",
       label: "Verificado",
-      detail: "Webhook de verificacao responde corretamente para o fluxo atual."
+      detail: "A conexao do WhatsApp responde corretamente para o fluxo atual."
     };
   }
 
@@ -163,14 +168,14 @@ function buildWebhookDiagnostic(config: DiagnosticWhatsAppConfig | null | undefi
     return {
       status: "degraded",
       label: "Operacional",
-      detail: "Webhook responde, mas o tenant ainda precisa alinhar token ou status final de verificacao."
+      detail: "A conexao responde, mas a empresa ainda precisa alinhar token ou status final de verificacao."
     };
   }
 
   return {
     status: "blocked",
     label: "Bloqueado",
-    detail: "Webhook ainda nao esta validado para uso operacional."
+    detail: "A conexao do WhatsApp ainda nao esta validada para uso operacional."
   };
 }
 
@@ -178,7 +183,7 @@ function buildReplyReadiness(summary: Omit<TenantDiagnosticSummary, "readiness">
   if (summary.plan.status === "blocked") {
     return {
       status: "blocked",
-      reason: "O plano do tenant ainda nao esta ativo."
+      reason: "O plano da empresa ainda nao esta ativo."
     };
   }
 
@@ -199,23 +204,23 @@ function buildReplyReadiness(summary: Omit<TenantDiagnosticSummary, "readiness">
   if (summary.webhook.status === "blocked") {
     return {
       status: "blocked",
-      reason: "O webhook do WhatsApp ainda nao esta validado para receber eventos."
+      reason: "A conexao do WhatsApp ainda nao esta validada para receber eventos."
     };
   }
 
   if (summary.ai.status === "blocked") {
     return {
       status: "blocked",
-      reason: "A camada de resposta esta indisponivel e sem fallback humano."
+      reason: "A camada de resposta esta indisponivel e sem atendimento humano de apoio."
     };
   }
 
   return {
-    status: "ready",
-    reason:
-      summary.ai.status === "degraded"
-        ? "Tenant pronto para responder com fallback humano enquanto a IA estiver degradada."
-        : "Tenant pronto para responder em operacao."
+      status: "ready",
+      reason:
+        summary.ai.status === "degraded"
+          ? "Empresa pronta para responder com apoio humano enquanto a IA estiver degradada."
+          : "Empresa pronta para responder em operacao."
   };
 }
 
@@ -243,44 +248,44 @@ export function getIntegrationStatuses(): IntegrationStatus[] {
       configured: envFlags.databaseConfigured,
       mode: getIntegrationMode(envFlags.databaseConfigured),
       description: envFlags.databaseConfigured
-        ? "Prisma pronto para usar Neon PostgreSQL."
-        : "Sem DATABASE_URL. O app usa modo simulado para evitar quebra durante o desenvolvimento.",
+        ? "Banco de dados pronto para registrar operacao real."
+        : "Sem banco configurado. O produto usa modo simulado para demonstracoes e validacao local.",
       nextStep: envFlags.databaseConfigured
-        ? "Rodar migracao e seed quando quiser persistencia real."
-        : "Adicione a DATABASE_URL do Neon para persistencia real."
+        ? "Seguir com operacao normal."
+        : "Adicionar a DATABASE_URL para persistencia real."
     },
     {
-      name: "Autenticacao",
+      name: "Acesso seguro",
       configured: envFlags.authConfigured,
       mode: getIntegrationMode(envFlags.authConfigured),
       description: envFlags.authConfigured
-        ? "Auth.js esta com secret configurado."
-        : "Sem AUTH_SECRET. O projeto gera fallback local para desenvolvimento.",
+        ? "Protecao de acesso configurada para uso real."
+        : "Sem segredo de autenticacao configurado. O produto usa fallback local para desenvolvimento.",
       nextStep: envFlags.authConfigured
-        ? "Ajustar URL final no deploy."
+        ? "Conferir URL final do ambiente publicado."
         : "Gerar um AUTH_SECRET seguro antes da publicacao em producao."
     },
     {
-      name: "Gemini",
+      name: "IA de atendimento",
       configured: envFlags.geminiLive,
       mode: getIntegrationMode(envFlags.geminiLive),
       description: envFlags.geminiLive
-        ? "Respostas inteligentes em modo live."
-        : "IA em modo mock para permitir testes sem custo nem chave real.",
+        ? "Respostas inteligentes em operacao real."
+        : "IA em modo simulado para permitir testes sem custo nem chave real.",
       nextStep: envFlags.geminiLive
-        ? "Validar prompts com o negocio real."
+        ? "Validar respostas com a empresa real."
         : "Adicionar GEMINI_API_KEY para ativar respostas reais."
     },
     {
-      name: "WhatsApp Cloud API",
+      name: "Conexao WhatsApp",
       configured: envFlags.whatsappLive,
       mode: getIntegrationMode(envFlags.whatsappLive),
       description: envFlags.whatsappLive
-        ? "Integracao pronta para envio real."
-        : "Fluxo local simulado para testar webhook e respostas sem Meta.",
+        ? "Canal pronto para envio real."
+        : "Fluxo local simulado para testar conexao e respostas sem Meta.",
       nextStep: envFlags.whatsappLive
-        ? "Publicar URL do webhook na Meta."
-        : "Preencher token, phone number ID e business account ID."
+        ? "Publicar a URL da conexao na Meta."
+        : "Preencher token, codigo do numero e codigo da conta comercial."
     }
   ];
 }

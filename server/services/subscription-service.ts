@@ -22,8 +22,8 @@ export function getActivationGuidance(input: ActivationGuidanceInput): Activatio
   if (input.subscriptionStatus === "ACTIVE" && input.readinessStatus === "ready") {
     return {
       tone: "success",
-      title: "Pronto para teste live",
-      detail: "Plano ativo e base operacional suficiente para validar o tenant com mensagens reais.",
+      title: "Pronto para teste real",
+      detail: "Plano ativo e base operacional suficiente para validar a empresa com mensagens reais.",
       nextStep: "Executar teste no WhatsApp do cliente e confirmar resposta ponta a ponta."
     };
   }
@@ -33,11 +33,11 @@ export function getActivationGuidance(input: ActivationGuidanceInput): Activatio
       tone: "warning",
       title: "Plano ativo com setup pendente",
       detail: input.whatsappActive
-        ? "O plano ja foi ativado, mas ainda existe bloqueio operacional antes do teste live."
+        ? "O plano ja foi ativado, mas ainda existe bloqueio operacional antes do teste real."
         : "O plano ja foi ativado, mas o WhatsApp ainda nao esta pronto para operacao comercial.",
       nextStep: input.whatsappActive
-        ? "Revisar diagnostico e liberar o proximo bloqueio antes do teste final."
-        : "Concluir configuracao do WhatsApp e validar webhook antes do teste live."
+        ? "Revisar o diagnostico e liberar o proximo bloqueio antes do teste final."
+        : "Concluir a configuracao do WhatsApp e validar a conexao antes do teste real."
     };
   }
 
@@ -45,7 +45,7 @@ export function getActivationGuidance(input: ActivationGuidanceInput): Activatio
     return {
       tone: "danger",
       title: "Plano sem cobertura comercial",
-      detail: "A automacao fica bloqueada porque o tenant esta cancelado ou expirado.",
+      detail: "A automacao fica bloqueada porque a empresa esta cancelada ou expirada.",
       nextStep: "Reativar ou renovar o plano antes de liberar novas respostas automaticas."
     };
   }
@@ -53,8 +53,8 @@ export function getActivationGuidance(input: ActivationGuidanceInput): Activatio
   return {
     tone: "warning",
     title: "Plano pendente de ativacao",
-    detail: "A automacao ainda nao responde porque a ativacao comercial depende da acao manual do admin.",
-    nextStep: "No admin, trocar o status para ACTIVE quando o tenant estiver aprovado para operacao."
+    detail: "A automacao ainda nao responde porque a ativacao comercial depende da acao manual da operacao.",
+    nextStep: "Na area de operacao, trocar o status para ativo quando a empresa estiver aprovada para uso."
   };
 }
 

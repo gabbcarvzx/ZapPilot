@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { getActivationGuidance } from "../../server/services/subscription-service";
 
 describe("activation guidance", () => {
-  it("explains in plain language why pending tenants are blocked", () => {
+  it("explains in plain language why pending businesses are blocked", () => {
     const guidance = getActivationGuidance({
       subscriptionStatus: "PENDING",
       whatsappActive: false,
@@ -12,10 +12,10 @@ describe("activation guidance", () => {
 
     expect(guidance.tone).toBe("warning");
     expect(guidance.title).toContain("Plano pendente");
-    expect(guidance.detail).toContain("admin");
+    expect(guidance.detail).toContain("operacao");
   });
 
-  it("confirms when the tenant is ready for live testing after activation", () => {
+  it("confirms when the business is ready for real testing after activation", () => {
     const guidance = getActivationGuidance({
       subscriptionStatus: "ACTIVE",
       whatsappActive: true,
@@ -27,7 +27,7 @@ describe("activation guidance", () => {
     expect(guidance.nextStep).toContain("WhatsApp");
   });
 
-  it("keeps active tenants in an operator follow-up state when setup is incomplete", () => {
+  it("keeps active businesses in an operator follow-up state when setup is incomplete", () => {
     const guidance = getActivationGuidance({
       subscriptionStatus: "ACTIVE",
       whatsappActive: false,

@@ -22,20 +22,20 @@ export function DiagnosticSummary({ summary }: DiagnosticSummaryProps) {
   const items = [
     { name: "Plano", value: summary.plan },
     { name: "WhatsApp", value: summary.whatsapp },
-    { name: "IA", value: summary.ai },
-    { name: "Banco", value: summary.database },
-    { name: "Webhook", value: summary.webhook }
+    { name: "IA ativa", value: summary.ai },
+    { name: "Banco de dados", value: summary.database },
+    { name: "Conexao WhatsApp", value: summary.webhook }
   ];
 
   return (
     <Card>
       <CardHeader className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div className="space-y-2">
-          <CardTitle>Diagnostico operacional</CardTitle>
+          <CardTitle>Prontidao operacional</CardTitle>
           <p className="text-sm text-slate-600">{summary.readiness.reason}</p>
         </div>
         <Badge className={getBadgeClassName(summary.readiness.status)}>
-          {summary.readiness.status === "ready" ? "Reply ready" : "Bloqueado"}
+          {summary.readiness.status === "ready" ? "Pronto para atender" : "Bloqueado"}
         </Badge>
       </CardHeader>
       <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
@@ -45,7 +45,7 @@ export function DiagnosticSummary({ summary }: DiagnosticSummaryProps) {
               <p className="text-sm font-medium text-slate-900">{item.name}</p>
               <Badge className={getBadgeClassName(item.value.status)}>{item.value.label}</Badge>
             </div>
-            <p className="mt-3 text-sm text-slate-600">{item.value.detail}</p>
+            <p className="mt-3 text-sm leading-6 text-slate-600">{item.value.detail}</p>
           </div>
         ))}
       </CardContent>

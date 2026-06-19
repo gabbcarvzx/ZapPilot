@@ -9,7 +9,7 @@ export default async function WhatsAppSettingsPage() {
   const config = business?.whatsappConfig;
 
   return (
-    <AppShell title="WhatsApp" subtitle="Salve as credenciais da Cloud API da Meta quando quiser sair do modo simulado.">
+    <AppShell title="Conexao WhatsApp" subtitle="Salve as credenciais da Meta quando quiser sair do modo simulado e validar o canal real.">
       <WhatsAppSettingsForm
         initialValues={{
           metaBusinessAccountId: config?.metaBusinessAccountId ?? "",

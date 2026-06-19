@@ -45,5 +45,5 @@ export function getAdminEmails() {
 }
 
 export function getIntegrationMode(live: boolean) {
-  return live ? "live" : "mock";
+  return live ? "Ativo" : "Simulado";
 }

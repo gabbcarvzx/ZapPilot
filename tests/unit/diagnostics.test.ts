@@ -87,7 +87,7 @@ describe("tenant diagnostics readiness", () => {
     expect(summary.readiness.reason).toContain("plano");
   });
 
-  it("reports Gemini failure mode as degraded and keeps tenant operational when human fallback exists", async () => {
+  it("reports Gemini failure mode as degraded and keeps the business operational when human assistance exists", async () => {
     const { getTenantDiagnosticSummary } = await loadDiagnosticsModule({
       DATABASE_URL: "postgres://tenant-db",
       GEMINI_API_KEY: "gemini-live",
@@ -116,7 +116,7 @@ describe("tenant diagnostics readiness", () => {
     });
 
     expect(summary.ai.status).toBe("degraded");
-    expect(summary.ai.label).toContain("fallback");
+    expect(summary.ai.label).toContain("atendimento humano");
     expect(summary.readiness.status).toBe("ready");
   });
 
@@ -177,7 +177,7 @@ describe("tenant diagnostics readiness", () => {
     expect(summary.webhook.label).toBe("Verificado");
   });
 
-  it("blocks AI readiness when Gemini is unavailable and no human fallback was declared", async () => {
+  it("blocks AI readiness when Gemini is unavailable and no human support was declared", async () => {
     const { getTenantDiagnosticSummary } = await loadDiagnosticsModule({
       DATABASE_URL: "postgres://tenant-db",
       WHATSAPP_ACCESS_TOKEN: "env-token",
@@ -205,6 +205,6 @@ describe("tenant diagnostics readiness", () => {
 
     expect(summary.ai.status).toBe("blocked");
     expect(summary.readiness.status).toBe("blocked");
-    expect(summary.readiness.reason).toContain("fallback humano");
+    expect(summary.readiness.reason).toContain("atendimento humano");
   });
 });

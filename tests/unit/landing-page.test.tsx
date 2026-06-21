@@ -6,34 +6,32 @@ import HomePage from "../../app/page";
 import { metadata } from "../../app/layout";
 
 describe("landing page commercial experience", () => {
-  it("renders the updated commercial copy and conversion CTAs", () => {
+  it("renders the premium commercial copy and primary CTAs", () => {
     const markup = renderToStaticMarkup(<HomePage />);
 
-    expect(markup).toContain("Seu WhatsApp atendendo clientes e gerando vendas, mesmo quando você está ocupado.");
-    expect(markup).toContain("O ZapPilot ajuda comércios locais a responder clientes mais rápido, organizar pedidos e não perder oportunidades no WhatsApp.");
+    expect(markup).toContain("Automatize atendimentos, responda clientes e venda mais pelo WhatsApp.");
+    expect(markup).toContain("O ZapPilot transforma o WhatsApp do seu negocio em um atendente automatico");
     expect(markup).toContain('href="/signup"');
-    expect(markup).toContain("Quero atender melhor");
-    expect(markup).toContain('href="#demonstracao"');
-    expect(markup).toContain("Ver demonstração");
+    expect(markup).toContain("Comecar agora");
+    expect(markup).toContain('href="/pricing"');
+    expect(markup).toContain("Ver planos");
   });
 
-  it("renders the refreshed demo card, trust signals and metrics", () => {
+  it("renders trust signals, visual mockup and premium proof points", () => {
     const markup = renderToStaticMarkup(<HomePage />);
 
-    expect(markup).toContain("Pronto para demonstração");
-    expect(markup).toContain("Configuração assistida");
-    expect(markup).toContain("Sem complicação técnica para o cliente");
-    expect(markup).toContain("1ª resposta");
-    expect(markup).toContain("3x mais clareza");
-    expect(markup).toContain("24h organizado");
-    expect(markup).toContain("Oi, queria saber o preço da pizza grande e se vocês entregam.");
-    expect(markup).toContain("Claro! A pizza grande sai a partir de R$54,90.");
+    expect(markup).toContain("Pagamento seguro");
+    expect(markup).toContain("Configuracao assistida");
+    expect(markup).toContain("Visao da conversa automatizada");
+    expect(markup).toContain("Pagamento seguro via ASAAS");
+    expect(markup).toContain("SaaS para atendimento comercial no WhatsApp");
+    expect(markup).toContain("Seu atendimento pode parecer mais profissional antes mesmo da primeira integracao real.");
   });
 
   it("uses the updated metadata in commercial Portuguese", () => {
-    expect(metadata.title).toBe("ZapPilot | Atendente automático para WhatsApp");
+    expect(metadata.title).toBe("ZapPilot | Atendente automatico para WhatsApp");
     expect(metadata.description).toBe(
-      "Atenda clientes, organize pedidos e venda melhor pelo WhatsApp com um atendente automático feito para comércios locais."
+      "Automatize atendimentos, responda clientes e venda mais pelo WhatsApp com uma operacao comercial mais organizada."
     );
   });
 });

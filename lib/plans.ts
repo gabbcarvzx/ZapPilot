@@ -7,13 +7,8 @@ export const PLAN_CATALOG: PlanRecord[] = [
     name: "Start",
     priceCents: 4900,
     currency: "BRL",
-    description: "Automatize o básico do atendimento e organize seu primeiro fluxo comercial.",
-    features: [
-      "Respostas automáticas simples",
-      "Horário de funcionamento",
-      "Catálogo básico",
-      "Chamar atendimento humano"
-    ],
+    description: "Automatize o basico do atendimento e organize seu primeiro fluxo comercial.",
+    features: ["Respostas automaticas simples", "Horario de funcionamento", "Catalogo basico", "Chamar atendimento humano"],
     isActive: true
   },
   {
@@ -23,13 +18,7 @@ export const PLAN_CATALOG: PlanRecord[] = [
     priceCents: 9700,
     currency: "BRL",
     description: "Adicione IA, capture leads e acompanhe conversas para vender mais.",
-    features: [
-      "Tudo do Start",
-      "IA com Gemini",
-      "Captura de leads",
-      "Histórico de conversas",
-      "Personalização por nicho"
-    ],
+    features: ["Tudo do Start", "IA com Gemini", "Captura de leads", "Historico de conversas", "Personalizacao por nicho"],
     isActive: true
   },
   {
@@ -38,14 +27,8 @@ export const PLAN_CATALOG: PlanRecord[] = [
     name: "Premium",
     priceCents: 19700,
     currency: "BRL",
-    description: "Operação avançada para negócios com mais volume e processo comercial.",
-    features: [
-      "Tudo do Pro",
-      "Múltiplos atendentes",
-      "Funil de vendas",
-      "Relatórios",
-      "Configuração avançada"
-    ],
+    description: "Operacao avancada para negocios com mais volume e processo comercial.",
+    features: ["Tudo do Pro", "Multiplos atendentes", "Funil de vendas", "Relatorios", "Configuracao avancada"],
     isActive: true
   }
 ];

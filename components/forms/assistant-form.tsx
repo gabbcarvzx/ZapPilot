@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { BookOpenText, CircleHelp, PackageSearch, Sparkles } from "lucide-react";
 
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormFeedback, type FormFeedbackState } from "@/components/ui/form-feedback";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PremiumCard } from "@/components/ui/premium-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip } from "@/components/ui/tooltip";
+import { requestJson } from "@/lib/client-request";
 
 export function AssistantForm({
   business,
@@ -30,11 +34,14 @@ export function AssistantForm({
   products: Array<{ name: string; description: string; price: string }>;
   faqs: Array<{ question: string; answer: string }>;
 }) {
-  const [assistantSaved, setAssistantSaved] = useState("");
-  const [catalogSaved, setCatalogSaved] = useState("");
+  const [assistantFeedback, setAssistantFeedback] = useState<FormFeedbackState | null>(null);
+  const [catalogFeedback, setCatalogFeedback] = useState<FormFeedbackState | null>(null);
+  const [assistantSubmitting, setAssistantSubmitting] = useState(false);
+  const [catalogSubmitting, setCatalogSubmitting] = useState(false);
 
   async function saveProducts(formData: FormData) {
-    setCatalogSaved("");
+    setCatalogSubmitting(true);
+    setCatalogFeedback(null);
     const items = [
       {
         name: String(formData.get("productName") || ""),
@@ -44,16 +51,36 @@ export function AssistantForm({
       }
     ];
 
-    await fetch("/api/products", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(items)
-    });
-    setCatalogSaved("Catalogo salvo. Agora teste esse item no simulador para validar resposta, preco e clareza comercial.");
+    try {
+      await requestJson(
+        "/api/products",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(items)
+        },
+        "Nao foi possivel salvar o catalogo principal."
+      );
+
+      setCatalogFeedback({
+        tone: "success",
+        title: "Catalogo salvo",
+        message: "Agora teste esse item no simulador para validar resposta, preco e clareza comercial."
+      });
+    } catch (error) {
+      setCatalogFeedback({
+        tone: "danger",
+        title: "Falha ao salvar",
+        message: error instanceof Error ? error.message : "Nao foi possivel salvar o catalogo principal."
+      });
+    } finally {
+      setCatalogSubmitting(false);
+    }
   }
 
   async function saveFaqs(formData: FormData) {
-    setAssistantSaved("");
+    setAssistantSubmitting(true);
+    setAssistantFeedback(null);
     const items = [
       {
         question: String(formData.get("faqQuestion") || ""),
@@ -62,45 +89,82 @@ export function AssistantForm({
       }
     ];
 
-    await fetch("/api/faqs", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(items)
-    });
+    try {
+      await requestJson(
+        "/api/faqs",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(items)
+        },
+        "Nao foi possivel salvar a FAQ inicial."
+      );
 
-    await fetch("/api/business", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: business.name,
-        niche: business.niche,
-        address: business.address,
-        phone: business.phone,
-        whatsappNumber: business.whatsappNumber,
-        businessHours: business.businessHoursJson ?? business.businessHours,
-        tone: String(formData.get("tone") || business.tone),
-        welcomeMessage: String(formData.get("welcomeMessage") || business.welcomeMessage),
-        closedMessage: String(formData.get("closedMessage") || business.closedMessage),
-        isOnboardingComplete: true
-      })
-    });
+      await requestJson(
+        "/api/business",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: business.name,
+            niche: business.niche,
+            address: business.address,
+            phone: business.phone,
+            whatsappNumber: business.whatsappNumber,
+            businessHours: business.businessHoursJson ?? business.businessHours,
+            tone: String(formData.get("tone") || business.tone),
+            welcomeMessage: String(formData.get("welcomeMessage") || business.welcomeMessage),
+            closedMessage: String(formData.get("closedMessage") || business.closedMessage),
+            isOnboardingComplete: true
+          })
+        },
+        "Nao foi possivel salvar a configuracao do atendente."
+      );
 
-    setAssistantSaved("Atendente salvo. O proximo passo e revisar se a FAQ e a mensagem fora do horario refletem o atendimento real da empresa.");
+      setAssistantFeedback({
+        tone: "success",
+        title: "Atendente salvo",
+        message: "O proximo passo e revisar se a FAQ e a mensagem fora do horario refletem o atendimento real da empresa."
+      });
+    } catch (error) {
+      setAssistantFeedback({
+        tone: "danger",
+        title: "Falha ao salvar",
+        message: error instanceof Error ? error.message : "Nao foi possivel salvar a configuracao do atendente."
+      });
+    } finally {
+      setAssistantSubmitting(false);
+    }
   }
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-      <Card>
-        <CardHeader>
-        <CardTitle>Configurar atendente</CardTitle>
-        <CardDescription>Defina o tom, as mensagens base e uma FAQ inicial para vender com mais clareza.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {assistantSaved ? (
-            <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
-              {assistantSaved}
+      <PremiumCard>
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <StatusBadge tone="brand">Atendente comercial</StatusBadge>
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">Configurar atendente</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+              Defina o tom, as mensagens base e uma FAQ inicial para vender com mais clareza.
+            </p>
+          </div>
+          <div className="grid gap-2 text-sm text-slate-600">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-violet-700" />
+              Tom e boas-vindas
             </div>
-          ) : null}
+            <div className="flex items-center gap-2">
+              <CircleHelp className="h-4 w-4 text-violet-700" />
+              FAQ inicial
+            </div>
+            <div className="flex items-center gap-2">
+              <BookOpenText className="h-4 w-4 text-violet-700" />
+              Resposta alinhada ao negocio
+            </div>
+          </div>
+        </div>
+        <div className="mt-6">
+          <FormFeedback state={assistantFeedback} />
           <form action={saveFaqs} className="space-y-4">
             <div className="space-y-2">
               <Tooltip
@@ -137,21 +201,25 @@ export function AssistantForm({
               <Label htmlFor="faqAnswer">Resposta da FAQ</Label>
               <Textarea id="faqAnswer" name="faqAnswer" defaultValue={faqs[0]?.answer ?? ""} />
             </div>
-            <Button type="submit">Salvar atendente</Button>
+            <Button type="submit" className="w-full sm:w-auto" disabled={assistantSubmitting}>
+              {assistantSubmitting ? "Salvando..." : "Salvar atendente"}
+            </Button>
           </form>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Catalogo principal</CardTitle>
-          <CardDescription>Comece com pelo menos um produto ou servico principal.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {catalogSaved ? (
-            <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
-              {catalogSaved}
-            </div>
-          ) : null}
+        </div>
+      </PremiumCard>
+      <PremiumCard>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <StatusBadge tone="brand">Oferta principal</StatusBadge>
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">Catalogo principal</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">Comece com pelo menos um produto ou servico principal.</p>
+          </div>
+          <div className="rounded-2xl bg-violet-100 p-3 text-violet-700">
+            <PackageSearch className="h-5 w-5" />
+          </div>
+        </div>
+        <div className="mt-6">
+          <FormFeedback state={catalogFeedback} />
           <form action={saveProducts} className="space-y-4">
             {products.length === 0 ? (
               <EmptyState
@@ -172,10 +240,12 @@ export function AssistantForm({
               <Label htmlFor="productPrice">Preco</Label>
               <Input id="productPrice" name="productPrice" defaultValue={products[0]?.price ?? ""} />
             </div>
-            <Button type="submit">Salvar catalogo</Button>
+            <Button type="submit" className="w-full sm:w-auto" disabled={catalogSubmitting}>
+              {catalogSubmitting ? "Salvando..." : "Salvar catalogo"}
+            </Button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </PremiumCard>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { envFlags, getIntegrationMode, env } from "@/lib/env";
+import { getPaidFeaturePolicy } from "@/server/policies/paid-feature-policy";
 import { IntegrationStatus } from "@/types/integrations";
 
 type SubscriptionStatus = "PENDING" | "ACTIVE" | "CANCELED" | "EXPIRED" | null | undefined;
@@ -63,7 +64,9 @@ function resolveRuntime(runtime?: Partial<DiagnosticRuntime>): DiagnosticRuntime
 }
 
 function buildPlanDiagnostic(subscriptionStatus: SubscriptionStatus): DiagnosticItem {
-  if (subscriptionStatus === "ACTIVE") {
+  const paidFeaturePolicy = getPaidFeaturePolicy(subscriptionStatus);
+
+  if (paidFeaturePolicy.subscriptionStatus === "ACTIVE") {
     return {
       status: "healthy",
       label: "Ativo",
@@ -71,15 +74,26 @@ function buildPlanDiagnostic(subscriptionStatus: SubscriptionStatus): Diagnostic
     };
   }
 
+  if (paidFeaturePolicy.subscriptionStatus === "EXPIRED") {
+    return {
+      status: "blocked",
+      label: "Expirado",
+      detail: paidFeaturePolicy.userMessageDetail
+    };
+  }
+
+  if (paidFeaturePolicy.subscriptionStatus === "CANCELED") {
+    return {
+      status: "blocked",
+      label: "Cancelado",
+      detail: paidFeaturePolicy.userMessageDetail
+    };
+  }
+
   return {
     status: "blocked",
-    label:
-      subscriptionStatus === "CANCELED"
-        ? "Cancelado"
-        : subscriptionStatus === "EXPIRED"
-          ? "Expirado"
-          : "Pendente",
-    detail: "Plano ainda nao foi ativado. A automacao fica bloqueada para esta empresa."
+    label: "Pendente",
+    detail: paidFeaturePolicy.userMessageDetail
   };
 }
 
@@ -183,7 +197,7 @@ function buildReplyReadiness(summary: Omit<TenantDiagnosticSummary, "readiness">
   if (summary.plan.status === "blocked") {
     return {
       status: "blocked",
-      reason: "O plano da empresa ainda nao esta ativo."
+      reason: "Conta criada, mas o plano ainda nao esta ativo para liberar a automacao real."
     };
   }
 

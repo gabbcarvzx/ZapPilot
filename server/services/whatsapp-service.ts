@@ -2,6 +2,7 @@ import { mockStore } from "@/lib/mock-store";
 import { prisma } from "@/lib/prisma";
 import { sendWhatsAppMessage } from "@/lib/whatsapp";
 import { buildAssistantReply } from "@/server/services/assistant-service";
+import { getWhatsAppConfigForBusiness } from "@/server/services/business-service";
 import { createOutboundMessage } from "@/server/services/message-service";
 import { isSubscriptionActive } from "@/server/services/subscription-service";
 
@@ -80,7 +81,18 @@ export async function receiveInboundMessage(
   }
 
   const assistant = await buildAssistantReply(businessId, content, phone);
-  await sendWhatsAppMessage({ phone, content: assistant.reply });
+  const config = await getWhatsAppConfigForBusiness(businessId);
+  await sendWhatsAppMessage({
+    phone,
+    content: assistant.reply,
+    credentials:
+      config?.accessToken && config?.metaPhoneNumberId
+        ? {
+            accessToken: config.accessToken,
+            phoneNumberId: config.metaPhoneNumberId
+          }
+        : undefined
+  });
   await createOutboundMessage({ businessId, phone, content: assistant.reply, conversationId, contactName });
 
   return {

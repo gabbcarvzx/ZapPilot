@@ -1,12 +1,14 @@
 import { mockStore } from "@/lib/mock-store";
 import { PLAN_CATALOG } from "@/lib/plans";
 import { prisma } from "@/lib/prisma";
+import { getPaidFeaturePolicy } from "@/server/policies/paid-feature-policy";
 import { subscriptionUpdateSchema } from "@/server/validators/admin";
+import { type PaymentStatus, type PlanRecord, type SubscriptionRecord, type SubscriptionStatus } from "@/types/domain";
 
 type ActivationGuidanceTone = "success" | "warning" | "danger";
 
 interface ActivationGuidanceInput {
-  subscriptionStatus: "PENDING" | "ACTIVE" | "CANCELED" | "EXPIRED" | null | undefined;
+  subscriptionStatus: SubscriptionStatus | null | undefined;
   whatsappActive: boolean;
   readinessStatus: "ready" | "blocked";
 }
@@ -18,8 +20,124 @@ interface ActivationGuidance {
   nextStep: string;
 }
 
+export interface SubscriptionSummary extends Omit<SubscriptionRecord, "status" | "paymentStatus"> {
+  status: SubscriptionStatus;
+  paymentStatus: PaymentStatus | null;
+  plan: PlanRecord | null;
+}
+
+function normalizePlanRecord(
+  planId: string,
+  plan:
+    | PlanRecord
+    | {
+        id: string;
+        code: string;
+        name: string;
+        priceCents: number;
+        currency: string;
+        description: string;
+        isActive: boolean;
+        features?: string[];
+        featuresJson?: string;
+      }
+    | null
+    | undefined
+): PlanRecord | null {
+  if (plan && "features" in plan && Array.isArray(plan.features)) {
+    return {
+      id: plan.id,
+      code: plan.code as PlanRecord["code"],
+      name: plan.name,
+      priceCents: plan.priceCents,
+      currency: plan.currency,
+      description: plan.description,
+      features: plan.features,
+      isActive: plan.isActive
+    };
+  }
+
+  if (plan && "featuresJson" in plan && typeof plan.featuresJson === "string") {
+    let features: string[] = [];
+
+    try {
+      const parsed = JSON.parse(plan.featuresJson);
+      features = Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string") : [];
+    } catch {
+      features = [];
+    }
+
+    return {
+      id: plan.id,
+      code: plan.code as PlanRecord["code"],
+      name: plan.name,
+      priceCents: plan.priceCents,
+      currency: plan.currency,
+      description: plan.description,
+      features,
+      isActive: plan.isActive
+    };
+  }
+
+  return PLAN_CATALOG.find((item) => item.id === planId) ?? null;
+}
+
+function normalizeSubscriptionSummary(
+  subscription:
+    | (SubscriptionRecord & {
+        plan?: PlanRecord | null;
+      })
+    | {
+        id: string;
+        businessId: string;
+        planId: string;
+        status: SubscriptionStatus;
+        asaasCustomerId: string | null;
+        asaasSubscriptionId: string | null;
+        asaasPaymentId: string | null;
+        checkoutUrl: string | null;
+        paymentStatus: PaymentStatus | null;
+        paidAt: Date | string | null;
+        currentPeriodStart: Date | string | null;
+        currentPeriodEnd: Date | string | null;
+        activatedAt: Date | string | null;
+        canceledAt: Date | string | null;
+        externalReference: string | null;
+        createdAt: Date | string;
+        updatedAt: Date | string;
+        plan?:
+          | PlanRecord
+          | {
+              id: string;
+              code: string;
+              name: string;
+              priceCents: number;
+              currency: string;
+              description: string;
+              isActive: boolean;
+              features?: string[];
+              featuresJson?: string;
+            }
+          | null;
+      }
+): SubscriptionSummary {
+  return {
+    ...subscription,
+    paidAt: subscription.paidAt ? String(subscription.paidAt) : null,
+    currentPeriodStart: subscription.currentPeriodStart ? String(subscription.currentPeriodStart) : null,
+    currentPeriodEnd: subscription.currentPeriodEnd ? String(subscription.currentPeriodEnd) : null,
+    activatedAt: subscription.activatedAt ? String(subscription.activatedAt) : null,
+    canceledAt: subscription.canceledAt ? String(subscription.canceledAt) : null,
+    createdAt: String(subscription.createdAt),
+    updatedAt: String(subscription.updatedAt),
+    plan: normalizePlanRecord(subscription.planId, subscription.plan)
+  };
+}
+
 export function getActivationGuidance(input: ActivationGuidanceInput): ActivationGuidance {
-  if (input.subscriptionStatus === "ACTIVE" && input.readinessStatus === "ready") {
+  const paidFeaturePolicy = getPaidFeaturePolicy(input.subscriptionStatus);
+
+  if (paidFeaturePolicy.subscriptionStatus === "ACTIVE" && input.readinessStatus === "ready") {
     return {
       tone: "success",
       title: "Pronto para teste real",
@@ -28,7 +146,7 @@ export function getActivationGuidance(input: ActivationGuidanceInput): Activatio
     };
   }
 
-  if (input.subscriptionStatus === "ACTIVE") {
+  if (paidFeaturePolicy.subscriptionStatus === "ACTIVE") {
     return {
       tone: "warning",
       title: "Plano ativo com setup pendente",
@@ -41,44 +159,46 @@ export function getActivationGuidance(input: ActivationGuidanceInput): Activatio
     };
   }
 
-  if (input.subscriptionStatus === "CANCELED" || input.subscriptionStatus === "EXPIRED") {
+  if (paidFeaturePolicy.subscriptionStatus === "CANCELED" || paidFeaturePolicy.subscriptionStatus === "EXPIRED") {
     return {
       tone: "danger",
       title: "Plano sem cobertura comercial",
-      detail: "A automacao fica bloqueada porque a empresa esta cancelada ou expirada.",
-      nextStep: "Reativar ou renovar o plano antes de liberar novas respostas automaticas."
+      detail: paidFeaturePolicy.userMessageDetail,
+      nextStep: paidFeaturePolicy.userNextStep
     };
   }
 
   return {
     tone: "warning",
     title: "Plano pendente de ativacao",
-    detail: "A automacao ainda nao responde porque a ativacao comercial depende da acao manual da operacao.",
-    nextStep: "Na area de operacao, trocar o status para ativo quando a empresa estiver aprovada para uso."
+    detail: "Seu painel ja esta criado, mas a operacao real continua bloqueada ate a confirmacao do pagamento.",
+    nextStep: paidFeaturePolicy.userNextStep
   };
 }
 
-export async function getSubscriptionForBusiness(businessId: string) {
+export async function getSubscriptionForBusiness(businessId: string): Promise<SubscriptionSummary | null> {
   if (prisma) {
-    return prisma.subscription.findFirst({
+    const subscription = await prisma.subscription.findFirst({
       where: { businessId },
       include: { plan: true },
       orderBy: { createdAt: "desc" }
     });
+
+    return subscription ? normalizeSubscriptionSummary(subscription) : null;
   }
 
   const subscription = mockStore.subscriptions.find((item) => item.businessId === businessId);
   if (!subscription) return null;
 
-  return {
+  return normalizeSubscriptionSummary({
     ...subscription,
     plan: PLAN_CATALOG.find((item) => item.id === subscription.planId) ?? null
-  };
+  });
 }
 
 export async function getAllBusinessesWithSubscriptions() {
   if (prisma) {
-    return prisma.business.findMany({
+    const businesses = await prisma.business.findMany({
       include: {
         subscriptions: {
           orderBy: { createdAt: "desc" },
@@ -90,6 +210,11 @@ export async function getAllBusinessesWithSubscriptions() {
       },
       orderBy: { createdAt: "desc" }
     });
+
+    return businesses.map((business) => ({
+      ...business,
+      subscriptions: business.subscriptions.map((subscription) => normalizeSubscriptionSummary(subscription))
+    }));
   }
 
   return mockStore.businesses.map((business) => ({
@@ -97,10 +222,12 @@ export async function getAllBusinessesWithSubscriptions() {
     owner: mockStore.users.find((user) => user.id === business.ownerUserId) ?? null,
     subscriptions: mockStore.subscriptions
       .filter((item) => item.businessId === business.id)
-      .map((subscription) => ({
-        ...subscription,
-        plan: PLAN_CATALOG.find((plan) => plan.id === subscription.planId) ?? null
-      })),
+      .map((subscription) =>
+        normalizeSubscriptionSummary({
+          ...subscription,
+          plan: PLAN_CATALOG.find((plan) => plan.id === subscription.planId) ?? null
+        })
+      ),
     whatsappConfig: mockStore.whatsappConfigs.find((item) => item.businessId === business.id) ?? null
   }));
 }

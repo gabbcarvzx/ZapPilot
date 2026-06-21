@@ -19,6 +19,16 @@ enum SubscriptionStatus {
   EXPIRED
 }
 
+enum PaymentStatus {
+  CHECKOUT_PENDING
+  PENDING
+  RECEIVED
+  CONFIRMED
+  OVERDUE
+  REFUNDED
+  CANCELED
+}
+
 enum ConversationStatus {
   OPEN
   NEEDS_HUMAN
@@ -61,6 +71,7 @@ model Business {
   name                 String
   slug                 String            @unique
   niche                String
+  document             String?
   address              String            @default("")
   phone                String            @default("")
   whatsappNumber       String            @default("")
@@ -100,6 +111,12 @@ model Subscription {
   businessId         String
   planId             String
   status             SubscriptionStatus @default(PENDING)
+  asaasCustomerId    String?
+  asaasSubscriptionId String?           @unique
+  asaasPaymentId     String?            @unique
+  checkoutUrl        String?
+  paymentStatus      PaymentStatus?
+  paidAt             DateTime?
   currentPeriodStart DateTime?
   currentPeriodEnd   DateTime?
   activatedAt        DateTime?
@@ -111,6 +128,7 @@ model Subscription {
   plan               Plan               @relation(fields: [planId], references: [id])
 
   @@index([businessId, status])
+  @@index([externalReference])
 }
 
 model WhatsAppConfig {

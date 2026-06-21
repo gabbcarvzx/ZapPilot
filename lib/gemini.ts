@@ -16,6 +16,10 @@ interface GeminiInput {
 
 export async function generateBusinessReply(input: GeminiInput) {
   if (!envFlags.geminiLive) {
+    if (!envFlags.mockModeEnabled) {
+      throw new Error("Gemini nao configurado e mock desabilitado.");
+    }
+
     return buildMockReply(input);
   }
 

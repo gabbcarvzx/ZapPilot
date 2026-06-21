@@ -32,3 +32,20 @@ export const PLAN_CATALOG: PlanRecord[] = [
     isActive: true
   }
 ];
+
+const PLAN_SLUG_TO_CODE = {
+  premium: "PREMIUM",
+  pro: "PRO",
+  start: "START"
+} as const;
+
+export function getPlanBySlug(slug: string): PlanRecord | null {
+  const normalizedSlug = slug.trim().toLowerCase();
+  const planCode = PLAN_SLUG_TO_CODE[normalizedSlug as keyof typeof PLAN_SLUG_TO_CODE];
+
+  if (!planCode) {
+    return null;
+  }
+
+  return PLAN_CATALOG.find((plan) => plan.code === planCode) ?? null;
+}

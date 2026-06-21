@@ -4,11 +4,13 @@ import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import { env, getAdminEmails } from "@/lib/env";
+import { resolveAuthSecret } from "@/lib/auth-secret";
+import { logInfo, logWarn } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import { findUserByEmail, getBusinessSnapshot } from "@/server/services/business-service";
 import { loginSchema } from "@/server/validators/auth";
 
-const secret = env.authSecret || "dev-only-insecure-secret";
+const secret = resolveAuthSecret(env.authSecret);
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: prisma ? PrismaAdapter(prisma) : undefined,
@@ -27,22 +29,55 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         const values = loginSchema.safeParse(credentials);
-        if (!values.success) return null;
+        if (!values.success) {
+          logWarn("auth.login.rejected", {
+            metadata: {
+              reason: "invalid_payload"
+            }
+          });
+          return null;
+        }
 
         const user = await findUserByEmail(values.data.email);
-        if (!user) return null;
+        if (!user) {
+          logWarn("auth.login.rejected", {
+            metadata: {
+              reason: "user_not_found"
+            }
+          });
+          return null;
+        }
 
         const valid = await compare(values.data.password, user.passwordHash);
-        if (!valid) return null;
+        if (!valid) {
+          logWarn("auth.login.rejected", {
+            userId: user.id,
+            businessId: ("businessId" in user && user.businessId) || ("business" in user && user.business?.id) || "",
+            metadata: {
+              reason: "invalid_password"
+            }
+          });
+          return null;
+        }
 
         const adminEmails = getAdminEmails();
+        const businessId = ("businessId" in user && user.businessId) || ("business" in user && user.business?.id) || "";
+        const resolvedRole = adminEmails.includes(user.email.toLowerCase()) ? "ADMIN" : user.role;
+
+        logInfo("auth.login.succeeded", {
+          userId: user.id,
+          businessId,
+          metadata: {
+            role: resolvedRole
+          }
+        });
 
         return {
           id: user.id,
           name: user.name,
           email: user.email,
-          role: adminEmails.includes(user.email.toLowerCase()) ? "ADMIN" : user.role,
-          businessId: ("businessId" in user && user.businessId) || ("business" in user && user.business?.id) || ""
+          role: resolvedRole,
+          businessId
         };
       }
     })

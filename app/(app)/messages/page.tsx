@@ -1,8 +1,8 @@
 import { AppShell } from "@/components/dashboard/app-shell";
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { MessageSimulatorForm } from "@/components/forms/message-simulator-form";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PremiumCard } from "@/components/ui/premium-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { requireUser } from "@/lib/guards";
 import { listMessagesForBusiness } from "@/server/services/message-service";
 
@@ -23,24 +23,26 @@ export default async function MessagesPage() {
             />
           ) : (
             conversations.map((conversation: (typeof conversations)[number]) => (
-              <Card key={conversation.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle>{conversation.contactName || conversation.contactPhone}</CardTitle>
-                    <Badge>{conversation.status}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
+              <PremiumCard key={conversation.id}>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold tracking-tight text-slate-950">{conversation.contactName || conversation.contactPhone}</h2>
+                  <StatusBadge tone="brand">{conversation.status}</StatusBadge>
+                </div>
+                <div className="mt-4 space-y-3">
                   {conversation.messages.map((message: (typeof conversation.messages)[number]) => (
                     <div
                       key={message.id}
-                      className={`rounded-2xl px-4 py-3 text-sm ${message.direction === "OUTBOUND" ? "ml-10 bg-teal-50 text-teal-900" : "mr-10 bg-slate-100 text-slate-800"}`}
+                      className={`rounded-3xl px-4 py-3 text-sm shadow-sm ${
+                        message.direction === "OUTBOUND"
+                          ? "ml-10 bg-violet-600 text-white shadow-violet-900/15"
+                          : "mr-10 bg-slate-100 text-slate-800 shadow-slate-900/5"
+                      }`}
                     >
                       {message.content}
                     </div>
                   ))}
-                </CardContent>
-              </Card>
+                </div>
+              </PremiumCard>
             ))
           )}
         </div>

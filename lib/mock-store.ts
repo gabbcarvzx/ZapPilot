@@ -1,5 +1,6 @@
 import { hashSync } from "bcryptjs";
 
+import { envFlags } from "@/lib/env";
 import { PLAN_CATALOG } from "@/lib/plans";
 import {
   BusinessRecord,
@@ -64,6 +65,7 @@ function createDefaultStore(): MockStoreState {
         name: "ZapBurger Centro",
         slug: "zapburger-centro",
         niche: "Hamburgueria",
+        document: null,
         address: "Rua do Centro, 120",
         phone: "(11) 99999-9999",
         whatsappNumber: "(11) 99999-9999",
@@ -82,6 +84,12 @@ function createDefaultStore(): MockStoreState {
         businessId,
         planId: "plan_pro",
         status: "ACTIVE",
+        asaasCustomerId: null,
+        asaasSubscriptionId: null,
+        asaasPaymentId: null,
+        checkoutUrl: null,
+        paymentStatus: "CONFIRMED",
+        paidAt: ts,
         currentPeriodStart: ts,
         currentPeriodEnd: ts,
         activatedAt: ts,
@@ -96,7 +104,7 @@ function createDefaultStore(): MockStoreState {
         id: "wa_demo",
         businessId,
         metaBusinessAccountId: "",
-        metaPhoneNumberId: "",
+        metaPhoneNumberId: "mock",
         metaAppId: "",
         verifyToken: "",
         accessToken: "",
@@ -184,6 +192,10 @@ function createDefaultStore(): MockStoreState {
 }
 
 function store() {
+  if (!envFlags.mockModeEnabled && process.env.NODE_ENV !== "test") {
+    throw new Error("Mock store desabilitado. Defina MOCK_MODE_ENABLED=true apenas para desenvolvimento controlado.");
+  }
+
   if (!globalForMockStore.mockStore) {
     globalForMockStore.mockStore = createDefaultStore();
   }

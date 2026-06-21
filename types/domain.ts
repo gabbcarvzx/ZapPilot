@@ -1,5 +1,13 @@
 export type UserRole = "CUSTOMER" | "ADMIN";
 export type SubscriptionStatus = "PENDING" | "ACTIVE" | "CANCELED" | "EXPIRED";
+export type PaymentStatus =
+  | "CHECKOUT_PENDING"
+  | "PENDING"
+  | "RECEIVED"
+  | "CONFIRMED"
+  | "OVERDUE"
+  | "REFUNDED"
+  | "CANCELED";
 export type ConversationStatus = "OPEN" | "NEEDS_HUMAN" | "CLOSED";
 export type MessageDirection = "INBOUND" | "OUTBOUND";
 export type MessageSource = "USER" | "BOT" | "HUMAN" | "SYSTEM";
@@ -35,6 +43,7 @@ export interface BusinessRecord {
   name: string;
   slug: string;
   niche: string;
+  document: string | null;
   address: string;
   phone: string;
   whatsappNumber: string;
@@ -52,6 +61,12 @@ export interface SubscriptionRecord {
   businessId: string;
   planId: string;
   status: SubscriptionStatus;
+  asaasCustomerId: string | null;
+  asaasSubscriptionId: string | null;
+  asaasPaymentId: string | null;
+  checkoutUrl: string | null;
+  paymentStatus: PaymentStatus | null;
+  paidAt: string | null;
   currentPeriodStart: string | null;
   currentPeriodEnd: string | null;
   activatedAt: string | null;

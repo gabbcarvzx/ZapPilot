@@ -1,5 +1,6 @@
 import { hash } from "bcryptjs";
 
+import { logInfo } from "@/lib/logger";
 import { mockStore } from "@/lib/mock-store";
 import { PLAN_CATALOG } from "@/lib/plans";
 import { prisma } from "@/lib/prisma";
@@ -13,38 +14,50 @@ export async function createAccount(input: unknown) {
   const slug = `${slugify(values.businessName)}-${Math.random().toString(36).slice(2, 6)}`;
 
   if (prisma) {
-    const user = await prisma.user.create({
-      data: {
-        name: values.name,
-        email: values.email.toLowerCase(),
-        passwordHash
-      }
-    });
+    return prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          name: values.name,
+          email: values.email.toLowerCase(),
+          passwordHash
+        }
+      });
 
-    const business = await prisma.business.create({
-      data: {
-        ownerUserId: user.id,
-        name: values.businessName,
-        slug,
-        niche: values.niche
-      }
-    });
+      const business = await tx.business.create({
+        data: {
+          ownerUserId: user.id,
+          name: values.businessName,
+          slug,
+          niche: values.niche,
+          document: null
+        }
+      });
 
-    await prisma.subscription.create({
-      data: {
+      await tx.subscription.create({
+        data: {
+          businessId: business.id,
+          planId: PLAN_CATALOG[0].id,
+          status: "PENDING",
+          paymentStatus: "CHECKOUT_PENDING"
+        }
+      });
+
+      await tx.whatsAppConfig.create({
+        data: {
+          businessId: business.id
+        }
+      });
+
+      logInfo("onboarding.account.transaction_committed", {
         businessId: business.id,
-        planId: PLAN_CATALOG[0].id,
-        status: "PENDING"
-      }
-    });
+        userId: user.id,
+        metadata: {
+          persistence: "prisma"
+        }
+      });
 
-    await prisma.whatsAppConfig.create({
-      data: {
-        businessId: business.id
-      }
+      return { userId: user.id, businessId: business.id };
     });
-
-    return { userId: user.id, businessId: business.id };
   }
 
   const userId = mockStore.createId("user");
@@ -68,6 +81,7 @@ export async function createAccount(input: unknown) {
     name: values.businessName,
     slug,
     niche: values.niche,
+    document: null,
     address: "",
     phone: "",
     whatsappNumber: "",
@@ -85,6 +99,12 @@ export async function createAccount(input: unknown) {
     businessId,
     planId: PLAN_CATALOG[0].id,
     status: "PENDING",
+    asaasCustomerId: null,
+    asaasSubscriptionId: null,
+    asaasPaymentId: null,
+    checkoutUrl: null,
+    paymentStatus: "CHECKOUT_PENDING",
+    paidAt: null,
     currentPeriodStart: null,
     currentPeriodEnd: null,
     activatedAt: null,
@@ -106,6 +126,14 @@ export async function createAccount(input: unknown) {
     isActive: false,
     createdAt: ts,
     updatedAt: ts
+  });
+
+  logInfo("onboarding.account.transaction_committed", {
+    businessId,
+    userId,
+    metadata: {
+      persistence: "mock"
+    }
   });
 
   return { userId, businessId };
@@ -193,6 +221,40 @@ export async function updateWhatsAppConfig(businessId: string, input: unknown) {
   if (!config) return null;
   Object.assign(config, values, { updatedAt: mockStore.now() });
   return config;
+}
+
+export async function resolveBusinessIdByPhoneNumberId(phoneNumberId: string) {
+  const normalizedPhoneNumberId = phoneNumberId.trim();
+  if (!normalizedPhoneNumberId) return null;
+
+  if (prisma) {
+    const config = await prisma.whatsAppConfig.findFirst({
+      where: {
+        metaPhoneNumberId: normalizedPhoneNumberId,
+        businessId: {
+          not: ""
+        }
+      },
+      select: {
+        businessId: true
+      }
+    });
+
+    return config?.businessId ?? null;
+  }
+
+  const config = mockStore.whatsappConfigs.find((item) => item.metaPhoneNumberId === normalizedPhoneNumberId);
+  return config?.businessId ?? null;
+}
+
+export async function getWhatsAppConfigForBusiness(businessId: string) {
+  if (prisma) {
+    return prisma.whatsAppConfig.findUnique({
+      where: { businessId }
+    });
+  }
+
+  return mockStore.whatsappConfigs.find((item) => item.businessId === businessId) ?? null;
 }
 
 export async function replaceProducts(businessId: string, items: unknown[]) {

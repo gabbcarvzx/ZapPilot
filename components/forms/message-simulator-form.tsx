@@ -2,32 +2,68 @@
 
 import React, { useState } from "react";
 
+import { EmptyState } from "@/components/dashboard/empty-state";
 import { Button } from "@/components/ui/button";
+import { FormFeedback, type FormFeedbackState } from "@/components/ui/form-feedback";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { requestJson } from "@/lib/client-request";
 
 export function MessageSimulatorForm({ businessId }: { businessId: string }) {
   const [response, setResponse] = useState("");
+  const [feedback, setFeedback] = useState<FormFeedbackState | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(formData: FormData) {
-    const res = await fetch("/api/dev/simulate-message", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        businessId,
-        phone: formData.get("phone"),
-        content: formData.get("content"),
-        contactName: formData.get("contactName")
-      })
-    });
+    setSubmitting(true);
+    setFeedback(null);
+    setResponse("");
 
-    const data = await res.json();
-    setResponse(data.reply ?? "Sem resposta");
+    try {
+      const data = await requestJson<{ status: string; reply?: string }>(
+        "/api/dev/simulate-message",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            businessId,
+            phone: formData.get("phone"),
+            content: formData.get("content"),
+            contactName: formData.get("contactName")
+          })
+        },
+        "Nao foi possivel simular a mensagem agora."
+      );
+
+      if (data.status === "inactive_plan") {
+        setFeedback({
+          tone: "warning",
+          title: "Automacao bloqueada",
+          message: "O plano ainda nao esta ativo. A conversa foi registrada, mas a resposta automatica permanece bloqueada."
+        });
+        return;
+      }
+
+      setResponse(data.reply ?? "Sem resposta");
+      setFeedback({
+        tone: "success",
+        title: "Simulacao concluida",
+        message: "Resposta gerada com sucesso. Agora valide tom, clareza e proximo passo comercial."
+      });
+    } catch (error) {
+      setFeedback({
+        tone: "danger",
+        title: "Falha na simulacao",
+        message: error instanceof Error ? error.message : "Nao foi possivel simular a mensagem agora."
+      });
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
-    <form action={handleSubmit} className="space-y-4 rounded-[28px] border border-white/70 bg-white/80 p-6 shadow-lg shadow-slate-900/5">
+    <form action={handleSubmit} className="space-y-4 rounded-[28px] border border-white/70 bg-white/80 p-4 shadow-lg shadow-slate-900/5 sm:p-6">
       <div className="space-y-2">
         <p className="text-lg font-semibold text-slate-900">Simulador comercial</p>
         <p className="text-sm leading-6 text-slate-600">
@@ -45,6 +81,8 @@ export function MessageSimulatorForm({ businessId }: { businessId: string }) {
         </ul>
       </div>
 
+      <FormFeedback state={feedback} />
+
       <div className="space-y-2">
         <Label htmlFor="contactName">Nome do contato</Label>
         <Input id="contactName" name="contactName" defaultValue="Lead do trafego pago" />
@@ -57,13 +95,21 @@ export function MessageSimulatorForm({ businessId }: { businessId: string }) {
         <Label htmlFor="content">Mensagem recebida</Label>
         <Textarea id="content" name="content" defaultValue="Qual o preco do principal combo?" />
       </div>
-      <Button type="submit">Simular atendimento</Button>
+      <Button type="submit" className="w-full sm:w-auto" disabled={submitting}>
+        {submitting ? "Simulando..." : "Simular atendimento"}
+      </Button>
       {response ? (
         <div className="rounded-2xl bg-teal-50 p-4 text-sm text-teal-900">
           <p className="font-medium">Resposta gerada</p>
           <p className="mt-2">{response}</p>
         </div>
-      ) : null}
+      ) : (
+        <EmptyState
+          title="Nenhuma simulacao recente"
+          description="Envie um roteiro curto para validar resposta, objecao comercial e handoff humano antes do teste no canal real."
+          actionLabel="Comece pelo pitch principal"
+        />
+      )}
     </form>
   );
 }

@@ -10,18 +10,17 @@ describe("public commercial pages", () => {
     const markup = renderToStaticMarkup(<PricingPage />);
 
     expect(markup).toContain("Escolha o plano ideal");
-    expect(markup).toContain("Mais popular");
-    expect(markup).toContain("Comecar com o Pro");
+    expect(markup).toContain("Plano recomendado");
+    expect(markup).toContain("Comprar Pro");
     expect(markup).toContain("Cancele quando quiser");
-    expect(markup).toContain('href="/signup"');
+    expect(markup).toContain('href="/checkout/pro"');
   });
 
-  it("renders success page with premium guidance and dashboard CTA", () => {
-    const markup = renderToStaticMarkup(<SuccessPage />);
+  it("renders success page with premium guidance and dashboard CTA", async () => {
+    const markup = renderToStaticMarkup(await SuccessPage({ searchParams: Promise.resolve({ status: "unknown" }) }));
 
-    expect(markup).toContain("Recebemos sua solicitacao com sucesso");
-    expect(markup).toContain("Conta pronta para continuar");
-    expect(markup).toContain("Ativacao acompanhada");
+    expect(markup).toContain("Nao conseguimos confirmar o status do pagamento agora");
+    expect(markup).toContain("Voltar aos planos");
     expect(markup).toContain('href="/dashboard"');
     expect(markup).toContain('href="/pricing"');
   });

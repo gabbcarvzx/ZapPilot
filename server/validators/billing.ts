@@ -4,6 +4,7 @@ export const checkoutInputSchema = z
   .object({
     plan: z.enum(["start", "pro", "premium"]),
     name: z.string().trim().min(2),
+    businessName: z.string().trim().min(2).optional(),
     email: z.string().trim().email(),
     phone: z.string().trim().min(10),
     document: z.string().trim().min(11).optional(),
@@ -31,6 +32,7 @@ export const checkoutInputSchema = z
   .transform((value) => ({
     plan: value.plan,
     name: value.name,
+    businessName: value.businessName?.trim() || value.name,
     email: value.email,
     phone: value.phone,
     document: value.document ?? value.cpfCnpj ?? "",

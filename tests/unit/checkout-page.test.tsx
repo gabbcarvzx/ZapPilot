@@ -18,8 +18,9 @@ describe("checkout page", () => {
 
     expect(markup).toContain("Pro");
     expect(markup).toContain("/mes");
-    expect(markup).toContain("Pagamento seguro via ASAAS");
+    expect(markup).toContain("Checkout seguro via ASAAS");
     expect(markup).toContain("IA com Gemini");
+    expect(markup).toContain('data-checkout-form="pro"');
   });
 
   it("shows a safe invalid-plan state for unsupported slugs", async () => {

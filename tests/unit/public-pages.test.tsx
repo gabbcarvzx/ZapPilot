@@ -9,11 +9,11 @@ describe("public commercial pages", () => {
   it("renders pricing with the premium plan positioning", () => {
     const markup = renderToStaticMarkup(<PricingPage />);
 
-    expect(markup).toContain("Escolha o plano ideal");
+    expect(markup).toContain("Escolha o plano e entre em um funil comercial mais claro");
     expect(markup).toContain("Plano recomendado");
-    expect(markup).toContain("Comprar Pro");
+    expect(markup).toContain("Comecar agora no plano Pro");
     expect(markup).toContain("Cancele quando quiser");
-    expect(markup).toContain('href="/checkout/pro"');
+    expect(markup).toContain('href="/signup?plan=pro"');
   });
 
   it("renders success page with premium guidance and dashboard CTA", async () => {

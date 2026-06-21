@@ -28,26 +28,28 @@ export default async function SuccessPage({
           eyebrow: "Assinatura confirmada",
           title: "Assinatura ativa",
           description:
-            "Seu acesso comercial ja esta liberado. Agora o proximo passo e deixar sua operacao pronta para atender clientes com rapidez e clareza.",
+            "Seu acesso comercial ja esta liberado. Agora o proximo passo e concluir o onboarding premium para colocar a operacao em atendimento real com mais rapidez e clareza.",
           icon: Sparkles,
           tone: "success" as const,
           primaryCta: { href: "/dashboard", label: "Ir para o dashboard" },
           secondaryCta: { href: "/pricing", label: "Ver planos" },
-          checklist: ["Configurar negocio", "Conectar WhatsApp", "Ativar atendente"]
+          checklist: ["Empresa", "Produtos", "FAQ", "WhatsApp", "Teste do assistente"]
         }
       : status === "pending"
         ? {
             eyebrow: "Pagamento em analise",
             title: "Seu pagamento foi iniciado",
             description:
-              "A confirmacao pode levar alguns instantes. Enquanto isso, voce ja pode acessar o painel e adiantar as configuracoes da sua empresa.",
+              "A confirmacao pode levar alguns instantes. Assim que ela entrar, seu dashboard abre o onboarding premium completo para colocar a operacao em movimento.",
             icon: Clock3,
             tone: "warning" as const,
             primaryCta: { href: "/dashboard", label: "Ir para o dashboard" },
             secondaryCta: { href: "/pricing", label: "Ver planos" },
             checklist: [
-              "Concluir dados do negocio",
-              "Preparar WhatsApp comercial",
+              "Empresa",
+              "Produtos",
+              "FAQ",
+              "WhatsApp",
               "A automacao real sera liberada apos a confirmacao"
             ]
           }

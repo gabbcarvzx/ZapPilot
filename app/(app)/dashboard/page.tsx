@@ -1,7 +1,9 @@
 import React from "react";
+import Link from "next/link";
 import { AppShell } from "@/components/dashboard/app-shell";
 import { DiagnosticSummary } from "@/components/dashboard/diagnostic-summary";
 import { EmptyState } from "@/components/dashboard/empty-state";
+import { Button } from "@/components/ui/button";
 import { MetricCard } from "@/components/ui/metric-card";
 import { PremiumCard } from "@/components/ui/premium-card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -11,7 +13,7 @@ import { getIntegrationStatuses } from "@/server/services/integrations-service";
 import { listMessagesForBusiness } from "@/server/services/message-service";
 import { getTenantOperationalDiagnostics } from "@/server/services/operational-diagnostics-service";
 import { getActivationGuidance, getSubscriptionForBusiness } from "@/server/services/subscription-service";
-import { BadgeDollarSign, MessageSquareMore, ShieldCheck, Sparkles } from "lucide-react";
+import { BadgeDollarSign, CheckCircle2, ChevronRight, MessageSquareMore, ShieldCheck, Sparkles } from "lucide-react";
 
 function translatePlanStatus(status?: string | null) {
   if (status === "ACTIVE") return "Ativo";
@@ -39,6 +41,71 @@ function getDaysRemaining(date?: string | null) {
   return Number.isFinite(diffDays) ? diffDays : null;
 }
 
+function getFirstRunSteps(input: {
+  business:
+    | {
+        niche?: string | null;
+        phone?: string | null;
+        businessHours?: string | null;
+        products?: Array<unknown>;
+        faqs?: Array<unknown>;
+        whatsappConfig?: {
+          metaPhoneNumberId?: string | null;
+          verifyToken?: string | null;
+          isActive?: boolean | null;
+        } | null;
+      }
+    | null;
+  hasMessages: boolean;
+}) {
+  const business = input.business;
+  const businessReady = Boolean(business?.niche && business?.phone && business?.businessHours);
+  const productsReady = Boolean(business?.products?.length);
+  const faqsReady = Boolean(business?.faqs?.length);
+  const whatsappReady = Boolean(
+    business?.whatsappConfig?.metaPhoneNumberId && business?.whatsappConfig?.verifyToken
+  );
+  const assistantReady = input.hasMessages;
+
+  return [
+    {
+      key: "business",
+      title: "Empresa",
+      description: "Defina nicho, telefone e horario para contextualizar a operacao.",
+      href: "/settings/business",
+      complete: businessReady
+    },
+    {
+      key: "products",
+      title: "Produtos",
+      description: "Cadastre seu item principal para a IA responder com mais contexto.",
+      href: "/assistant",
+      complete: productsReady
+    },
+    {
+      key: "faq",
+      title: "FAQ",
+      description: "Preencha perguntas comerciais para reduzir friccao no atendimento.",
+      href: "/assistant",
+      complete: faqsReady
+    },
+    {
+      key: "whatsapp",
+      title: "WhatsApp",
+      description: "Prepare o canal com credenciais e webhook antes da ativacao real.",
+      href: "/settings/whatsapp",
+      complete: whatsappReady
+    },
+    {
+      key: "test",
+      title: "Teste do assistente",
+      description: "Gere a primeira conversa para validar copy, tom e fluxo.",
+      href: "/messages",
+      complete: assistantReady
+    }
+  ];
+}
+
 export default async function DashboardPage() {
   const user = await requireUser();
   const business = await getBusinessSnapshot(user.businessId);
@@ -57,6 +124,9 @@ export default async function DashboardPage() {
   const checkoutUrl = subscription && "checkoutUrl" in subscription ? subscription.checkoutUrl : null;
   const daysRemaining = getDaysRemaining(subscription?.currentPeriodEnd);
   const hasPendingBilling = subscription?.status !== "ACTIVE";
+  const firstRunSteps = getFirstRunSteps({ business, hasMessages: messages.length > 0 });
+  const completedSteps = firstRunSteps.filter((step) => step.complete).length;
+  const progressPercent = Math.round((completedSteps / firstRunSteps.length) * 100);
   const activationCardClassName =
     activationGuidance.tone === "success"
       ? "border-emerald-200 bg-emerald-50"
@@ -70,6 +140,50 @@ export default async function DashboardPage() {
       subtitle="Acompanhe o plano, a configuracao da empresa e o que ainda falta para colocar o atendimento em operacao."
     >
       <div className="space-y-6">
+        {!business?.isOnboardingComplete ? (
+          <PremiumCard className="overflow-hidden p-0">
+            <div className="border-b border-violet-100 bg-[linear-gradient(135deg,#22143d_0%,#4c1d95_58%,#6d28d9_100%)] px-6 py-6 text-white">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                  <StatusBadge tone={subscription?.status === "ACTIVE" ? "success" : "warning"} className="bg-white/12 text-white ring-white/15">
+                    {subscription?.status === "ACTIVE" ? "Primeiro acesso liberado" : "Pagamento pendente"}
+                  </StatusBadge>
+                  <h2 className="mt-4 text-3xl font-semibold tracking-tight">Onboarding premium do primeiro acesso</h2>
+                  <p className="mt-3 max-w-2xl text-sm leading-7 text-violet-100/85">
+                    Complete a operacao em cinco passos para sair do setup e entrar em um fluxo comercial mais confiavel.
+                  </p>
+                </div>
+                <div className="rounded-[28px] bg-white/10 px-5 py-4 backdrop-blur">
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-violet-100/80">Progresso</p>
+                  <p className="mt-2 text-3xl font-semibold">{completedSteps}/5</p>
+                  <p className="mt-1 text-sm text-violet-100/80">{progressPercent}% concluido</p>
+                </div>
+              </div>
+              <div className="mt-5 h-2 rounded-full bg-white/10">
+                <div className="h-2 rounded-full bg-emerald-400 transition-all" style={{ width: `${progressPercent}%` }} />
+              </div>
+            </div>
+            <div className="grid gap-4 p-6 md:grid-cols-2 xl:grid-cols-5">
+              {firstRunSteps.map((step, index) => (
+                <div key={step.key} className="rounded-[28px] border border-violet-100 bg-white/90 p-4 shadow-sm shadow-violet-900/5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">Passo {index + 1}</div>
+                    <StatusBadge tone={step.complete ? "success" : "warning"}>{step.complete ? "Concluido" : "Pendente"}</StatusBadge>
+                  </div>
+                  <p className="mt-4 text-base font-semibold text-slate-950">{step.title}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{step.description}</p>
+                  <Button asChild variant={step.complete ? "secondary" : "default"} className="mt-4 w-full justify-between">
+                    <Link href={step.href}>
+                      {step.complete ? "Revisar etapa" : "Abrir etapa"}
+                      {step.complete ? <CheckCircle2 className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                    </Link>
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </PremiumCard>
+        ) : null}
+
         <DiagnosticSummary summary={diagnosticSummary} />
 
         <div className={`rounded-[28px] border p-6 shadow-sm ${activationCardClassName}`}>

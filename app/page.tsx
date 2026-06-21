@@ -66,13 +66,13 @@ export default function HomePage() {
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="h-12 px-6 text-base">
-              <Link href="/signup">
+              <Link href="/pricing">
                 Comecar agora
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button asChild variant="secondary" size="lg" className="h-12 px-6 text-base">
-              <Link href="/pricing">Ver planos</Link>
+              <Link href="/login">Entrar no painel</Link>
             </Button>
           </div>
 
@@ -122,7 +122,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="max-w-[21rem] rounded-[26px] rounded-bl-md border border-violet-100 bg-white px-4 py-3 text-sm leading-6 text-slate-700 shadow-sm shadow-violet-900/5">
-              Voce cria sua conta, configura a empresa e segue para o painel. O pagamento e seguro, a configuracao e assistida e o atendimento fica pronto para evoluir com voce.
+              Voce escolhe o plano, cria sua conta e segue direto para um checkout seguro. Depois disso, o dashboard abre um onboarding premium para ativar sua operacao.
             </div>
             <div className="rounded-[28px] border border-violet-100 bg-white/90 p-5 shadow-sm shadow-violet-900/5">
               <div className="flex items-center gap-3">
@@ -189,10 +189,10 @@ export default function HomePage() {
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" variant="secondary" className="h-12 px-6 text-base">
-                <Link href="/signup">Comecar agora</Link>
+                <Link href="/pricing">Comecar agora</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="h-12 border-white/30 px-6 text-base text-white hover:bg-white/10">
-                <Link href="/pricing">Ver planos</Link>
+                <Link href="/login">Entrar no painel</Link>
               </Button>
             </div>
           </div>

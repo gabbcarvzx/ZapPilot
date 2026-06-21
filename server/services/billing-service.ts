@@ -633,7 +633,7 @@ export async function startCheckout(input: unknown, options: StartCheckoutOption
     account.business ??
     (await createBusiness({
       ownerUserId: user.id,
-      name: values.name,
+      name: values.businessName,
       email,
       phone: values.phone,
       document: values.document

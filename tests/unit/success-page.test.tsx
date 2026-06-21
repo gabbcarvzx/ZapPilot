@@ -25,9 +25,10 @@ describe("success page", () => {
     );
 
     expect(markup).toContain("Assinatura ativa");
-    expect(markup).toContain("Configurar negocio");
-    expect(markup).toContain("Conectar WhatsApp");
-    expect(markup).toContain("Ativar atendente");
+    expect(markup).toContain("Empresa");
+    expect(markup).toContain("Produtos");
+    expect(markup).toContain("WhatsApp");
+    expect(markup).toContain("Teste do assistente");
     expect(markup).toContain("Ir para o dashboard");
   });
 

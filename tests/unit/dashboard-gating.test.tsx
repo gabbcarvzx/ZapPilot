@@ -172,6 +172,8 @@ describe("commercial gating", () => {
     expect(markup).toContain("Plano pendente de ativacao");
     expect(markup).toContain("Pendente");
     expect(markup).toContain('href="https://sandbox.asaas.com/i/pay_123"');
+    expect(markup).toContain("Onboarding premium do primeiro acesso");
+    expect(markup).toContain("Passo 1");
   });
 
   it("dashboard active shows release state", async () => {
@@ -187,6 +189,7 @@ describe("commercial gating", () => {
     expect(markup).toContain("Pronto para teste real");
     expect(markup).toContain("Ativo");
     expect(markup).not.toContain("Pagamento pendente");
+    expect(markup).toContain("Onboarding premium do primeiro acesso");
   });
 
   it("onboarding keeps setup available but blocks real activation for pending plans", async () => {

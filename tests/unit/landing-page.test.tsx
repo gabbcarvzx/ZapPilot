@@ -11,10 +11,10 @@ describe("landing page commercial experience", () => {
 
     expect(markup).toContain("Automatize atendimentos, responda clientes e venda mais pelo WhatsApp.");
     expect(markup).toContain("O ZapPilot transforma o WhatsApp do seu negocio em um atendente automatico");
-    expect(markup).toContain('href="/signup"');
-    expect(markup).toContain("Comecar agora");
     expect(markup).toContain('href="/pricing"');
-    expect(markup).toContain("Ver planos");
+    expect(markup).toContain("Comecar agora");
+    expect(markup).toContain('href="/login"');
+    expect(markup).toContain("Entrar no painel");
   });
 
   it("renders trust signals, visual mockup and premium proof points", () => {

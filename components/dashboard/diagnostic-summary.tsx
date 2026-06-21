@@ -50,7 +50,7 @@ export function DiagnosticSummary({ summary }: DiagnosticSummaryProps) {
           Modo WhatsApp: {summary.whatsapp.mode}
         </StatusBadge>
       </div>
-      <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+      <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         {items.map((item) => (
           <div key={item.name} className="rounded-3xl border border-violet-100 bg-white/80 p-4 shadow-sm shadow-violet-900/5">
             <div className="flex items-center justify-between gap-3">

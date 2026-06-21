@@ -37,7 +37,7 @@ export default function PricingPage() {
 
   return (
     <main className="relative overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(76,29,149,0.14),_transparent_26%),linear-gradient(180deg,_#f8fafc_0%,_#f6f1ff_46%,_#ffffff_100%)]">
-      <div className="mx-auto max-w-7xl px-4 py-14 lg:px-6 lg:py-16">
+      <div className="mx-auto max-w-7xl px-4 py-14 pb-32 lg:px-6 lg:py-16">
         <SectionHeading
           eyebrow="Planos"
           title="Escolha o plano e entre em um funil comercial mais claro, premium e pronto para converter."
@@ -198,15 +198,15 @@ export default function PricingPage() {
         </div>
       </div>
 
-      <div className="fixed inset-x-4 bottom-4 z-20 lg:hidden">
-        <Link
-          href={`/signup?plan=${getPlanSlug(recommendedPlan.code)}`}
-          className="flex items-center justify-between rounded-[24px] bg-slate-950 px-5 py-4 text-sm font-semibold text-white shadow-[0_28px_80px_-34px_rgba(15,23,42,0.65)]"
-        >
-          <span>Comecar agora no plano {recommendedPlan.name}</span>
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
+        <div className="fixed inset-x-4 bottom-4 z-20 lg:hidden">
+          <Link
+            href={`/signup?plan=${getPlanSlug(recommendedPlan.code)}`}
+            className="flex items-center justify-between gap-3 rounded-[24px] bg-slate-950 px-5 py-4 text-sm font-semibold text-white shadow-[0_28px_80px_-34px_rgba(15,23,42,0.65)]"
+          >
+            <span>Comecar agora no plano {recommendedPlan.name}</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
     </main>
   );
 }

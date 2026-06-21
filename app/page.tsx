@@ -65,13 +65,13 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg" className="h-12 px-6 text-base">
+            <Button asChild size="lg" className="h-12 w-full px-6 text-base sm:w-auto">
               <Link href="/pricing">
                 Comecar agora
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-            <Button asChild variant="secondary" size="lg" className="h-12 px-6 text-base">
+            <Button asChild variant="secondary" size="lg" className="h-12 w-full px-6 text-base sm:w-auto">
               <Link href="/login">Entrar no painel</Link>
             </Button>
           </div>
@@ -188,10 +188,10 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" variant="secondary" className="h-12 px-6 text-base">
+              <Button asChild size="lg" variant="secondary" className="h-12 w-full px-6 text-base sm:w-auto">
                 <Link href="/pricing">Comecar agora</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="h-12 border-white/30 px-6 text-base text-white hover:bg-white/10">
+              <Button asChild size="lg" variant="outline" className="h-12 w-full border-white/30 px-6 text-base text-white hover:bg-white/10 sm:w-auto">
                 <Link href="/login">Entrar no painel</Link>
               </Button>
             </div>

@@ -12,7 +12,7 @@ export default async function MessagesPage() {
 
   return (
     <AppShell title="Conversas e simulacao" subtitle="Veja as conversas salvas e simule novos atendimentos sem depender da Meta.">
-      <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
         <MessageSimulatorForm businessId={user.businessId} />
         <div className="space-y-4">
           {conversations.length === 0 ? (
@@ -24,15 +24,15 @@ export default async function MessagesPage() {
           ) : (
             conversations.map((conversation: (typeof conversations)[number]) => (
               <PremiumCard key={conversation.id}>
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold tracking-tight text-slate-950">{conversation.contactName || conversation.contactPhone}</h2>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="break-words text-xl font-semibold tracking-tight text-slate-950">{conversation.contactName || conversation.contactPhone}</h2>
                   <StatusBadge tone="brand">{conversation.status}</StatusBadge>
                 </div>
                 <div className="mt-4 space-y-3">
                   {conversation.messages.map((message: (typeof conversation.messages)[number]) => (
                     <div
                       key={message.id}
-                      className={`rounded-3xl px-4 py-3 text-sm shadow-sm ${
+                      className={`break-words rounded-3xl px-4 py-3 text-sm shadow-sm ${
                         message.direction === "OUTBOUND"
                           ? "ml-10 bg-violet-600 text-white shadow-violet-900/15"
                           : "mr-10 bg-slate-100 text-slate-800 shadow-slate-900/5"

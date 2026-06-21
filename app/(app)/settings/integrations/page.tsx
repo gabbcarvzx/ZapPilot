@@ -39,7 +39,7 @@ export default async function IntegrationsPage() {
           />
         ) : null}
 
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
           {statuses.map((status) => (
             <PremiumCard key={status.name}>
               <div className="flex items-center justify-between gap-3">
@@ -60,7 +60,7 @@ export default async function IntegrationsPage() {
             <div className="mt-4 space-y-3">
               <p className="text-sm leading-6 text-slate-600">{diagnosticSummary.billing.detail}</p>
               <p className="rounded-2xl bg-slate-50 p-4 text-sm font-medium text-slate-700">
-                O fluxo de cobranca ainda nao foi integrado nesta branch. O foco atual continua em operacao, onboarding e diagnostico.
+                Checkout, webhook e bloqueio comercial ja fazem parte da operacao. O que falta aqui e apenas concluir a configuracao segura do ambiente para uso real.
               </p>
             </div>
           </PremiumCard>

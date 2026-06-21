@@ -96,7 +96,7 @@ export default async function SuccessPage({
           </div>
         </div>
 
-        <div className="grid gap-6 p-8 lg:grid-cols-3">
+        <div className="grid gap-4 p-6 sm:p-8 md:grid-cols-2 xl:grid-cols-5">
           {content.checklist.map((item) => (
             <div key={item} className="rounded-[28px] border border-violet-100 bg-violet-50/70 p-5">
               <div className="flex items-start gap-3">
@@ -107,12 +107,12 @@ export default async function SuccessPage({
           ))}
         </div>
 
-        <div className="px-8 pb-8">
+        <div className="px-6 pb-6 sm:px-8 sm:pb-8">
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button asChild>
+            <Button asChild className="w-full sm:w-auto">
               <Link href={content.primaryCta.href}>{content.primaryCta.label}</Link>
             </Button>
-            <Button asChild variant="secondary">
+            <Button asChild variant="secondary" className="w-full sm:w-auto">
               <Link href={content.secondaryCta.href}>{content.secondaryCta.label}</Link>
             </Button>
           </div>

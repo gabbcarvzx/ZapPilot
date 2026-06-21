@@ -163,7 +163,7 @@ export default async function DashboardPage() {
                 <div className="h-2 rounded-full bg-emerald-400 transition-all" style={{ width: `${progressPercent}%` }} />
               </div>
             </div>
-            <div className="grid gap-4 p-6 md:grid-cols-2 xl:grid-cols-5">
+            <div className="grid gap-4 p-6 md:grid-cols-2 2xl:grid-cols-5">
               {firstRunSteps.map((step, index) => (
                 <div key={step.key} className="rounded-[28px] border border-violet-100 bg-white/90 p-4 shadow-sm shadow-violet-900/5">
                   <div className="flex items-start justify-between gap-3">
@@ -206,7 +206,7 @@ export default async function DashboardPage() {
                 href={checkoutUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex rounded-2xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-900/20 transition hover:-translate-y-0.5"
+                className="inline-flex w-full justify-center rounded-2xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-900/20 transition hover:-translate-y-0.5 sm:w-auto"
               >
                 Regularizar assinatura
               </a>
@@ -215,7 +215,7 @@ export default async function DashboardPage() {
           ) : null}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
           <MetricCard
             label="Plano"
             value={translatePlanStatus(subscription?.status)}
@@ -292,7 +292,7 @@ export default async function DashboardPage() {
                   href={checkoutUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-5 inline-flex rounded-2xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-900/20 transition hover:-translate-y-0.5"
+                  className="mt-5 inline-flex w-full justify-center rounded-2xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-900/20 transition hover:-translate-y-0.5 sm:w-auto"
                 >
                   Verificar pagamento
                 </a>
@@ -309,7 +309,7 @@ export default async function DashboardPage() {
                   <p className="mt-1 text-sm text-slate-600">Acompanhe o que ja esta pronto para operar e o que ainda precisa de ajuste.</p>
                 </div>
               </div>
-              <div className="mt-6 grid gap-3 md:grid-cols-2">
+              <div className="mt-6 grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
                 {statuses.map((status) => (
                   <div key={status.name} className="rounded-3xl border border-violet-100 bg-white/80 p-4 shadow-sm shadow-violet-900/5">
                     <div className="flex items-center justify-between">
@@ -343,7 +343,7 @@ export default async function DashboardPage() {
                       <p className="font-medium">{conversation.contactName || conversation.contactPhone}</p>
                       <StatusBadge tone="brand">{conversation.status}</StatusBadge>
                     </div>
-                    <p className="mt-3 text-sm text-slate-600">{conversation.messages.at(-1)?.content ?? "Sem mensagens."}</p>
+                    <p className="mt-3 break-words text-sm text-slate-600">{conversation.messages.at(-1)?.content ?? "Sem mensagens."}</p>
                   </div>
                 ))
               )}

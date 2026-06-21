@@ -80,7 +80,7 @@ export default async function AdminPage() {
           title="Controle comercial da operacao"
           description="Monitore planos, liberacao comercial e prontidao de automacao sem perder contexto da empresa."
         />
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
           <MetricCard
             label="Clientes ativos"
             value={adminSummary.commercial.active}
@@ -121,7 +121,7 @@ export default async function AdminPage() {
             </div>
             <StatusBadge tone={systemStatusTone}>Sistema {systemStatusTone === "success" ? "estavel" : "degradado"}</StatusBadge>
           </div>
-          <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+          <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
             {[
               { name: "Banco", value: adminSummary.system.database },
               { name: "WhatsApp", value: adminSummary.system.whatsapp },
@@ -168,7 +168,7 @@ export default async function AdminPage() {
             </div>
             <StatusBadge tone="brand">Receita estimada</StatusBadge>
           </div>
-          <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {adminSummary.commercial.planDistribution.map((item) => (
               <div key={item.planName} className="rounded-3xl border border-violet-100 bg-white/80 p-4 shadow-sm shadow-violet-900/5">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Plano</p>
@@ -253,7 +253,7 @@ export default async function AdminPage() {
                         <select
                           name="planId"
                           defaultValue={row.subscriptions[0]?.planId ?? PLAN_CATALOG[0].id}
-                          className="rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm"
+                          className="w-full rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm"
                         >
                           {PLAN_CATALOG.map((plan) => (
                             <option key={plan.id} value={plan.id}>
@@ -264,7 +264,7 @@ export default async function AdminPage() {
                         <select
                           name="status"
                           defaultValue={row.subscriptions[0]?.status ?? "PENDING"}
-                          className="rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm"
+                          className="w-full rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm"
                         >
                           <option value="ACTIVE">Ativo</option>
                           <option value="PENDING">Pendente</option>
@@ -324,7 +324,7 @@ export default async function AdminPage() {
                             <select
                               name="planId"
                               defaultValue={row.subscriptions[0]?.planId ?? PLAN_CATALOG[0].id}
-                              className="rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm"
+                            className="rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm"
                             >
                               {PLAN_CATALOG.map((plan) => (
                                 <option key={plan.id} value={plan.id}>
@@ -335,7 +335,7 @@ export default async function AdminPage() {
                             <select
                               name="status"
                               defaultValue={row.subscriptions[0]?.status ?? "PENDING"}
-                              className="rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm"
+                            className="rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm"
                             >
                               <option value="ACTIVE">Ativo</option>
                               <option value="PENDING">Pendente</option>
